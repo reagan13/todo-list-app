@@ -41,7 +41,6 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  @override
   void showErrorMessage(String message) {
     // Display the error message to the user
     // You can use a SnackBar, AlertDialog, or any other UI element
@@ -69,7 +68,17 @@ class _LoginState extends State<Login> {
         errormessage = "Invalid";
       });
     } on FirebaseAuthException catch (e) {
-      String errorMessage = e.toString();
+      String errorMessage;
+
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Wrong password provided for that user.';
+      } else if (e.code == 'invalid-email') {
+        errorMessage = 'The email address is not valid.';
+      } else {
+        errorMessage = 'An error occurred: ${e.message}';
+      }
       showErrorMessage(errorMessage);
 
       setState(() {

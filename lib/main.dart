@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:todo_list_application/authentication/login/authenticator.dart';
 import 'package:todo_list_application/authentication/login/login-raw1.dart';
+import 'package:todo_list_application/screen/homepage.dart';
+import 'package:todo_list_application/widget/navigation_menu.dart';
 import 'firebase_options.dart';
 import 'package:todo_list_application/introduction/onboarding.dart';
 
@@ -23,14 +25,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-        textTheme: GoogleFonts.latoTextTheme(),
-      ),
-      home: const Authenticator(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+          textTheme: GoogleFonts.latoTextTheme(),
+        ),
+        home: const Authenticator());
   }
 }

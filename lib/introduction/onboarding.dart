@@ -17,7 +17,6 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   final PageController _pageController = PageController(initialPage: 0);
 
-  // ignore: unused_field
   int _activePage = 0;
 
   final List<Widget> _pages = [
