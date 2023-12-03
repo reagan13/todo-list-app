@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_fields, prefer_const_constructors, camel_case_types, avoid_print, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_final_fields, prefer_const_constructors, camel_case_types, avoid_print, prefer_const_literals_to_create_immutables, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
