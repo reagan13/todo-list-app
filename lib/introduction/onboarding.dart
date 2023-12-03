@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, unused_field
+
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/authentication/login/authenticator.dart';
 import 'package:todo_list_application/introduction/cover_page.dart';
