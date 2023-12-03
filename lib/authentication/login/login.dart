@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list_application/widget/navigation_menu.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -40,7 +39,19 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  Future checklogin(email, password) async {
+  @override
+  void showErrorMessage(String message) {
+    // Display the error message to the user
+    // You can use a SnackBar, AlertDialog, or any other UI element
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Future checklogin(username, password) async {
     showDialog(
       context: context,
       useRootNavigator: false,
@@ -51,16 +62,18 @@ class _LoginState extends State<Login> {
     );
     try {
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+          .signInWithEmailAndPassword(email: username, password: password);
       setState(() {
-        errormessage = "";
+        errormessage = "Invalid";
       });
     } on FirebaseAuthException catch (e) {
-      print(e);
+      String errorMessage = e.toString();
+      showErrorMessage(errorMessage);
+
       setState(() {
         errormessage = e.message.toString();
       });
-      // TODO
+      // Show the error message in the UI (add this if it's not present in your code)
     }
     Navigator.pop(context);
   }
@@ -71,28 +84,28 @@ class _LoginState extends State<Login> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // first container
           const Text(
             'Welcome to List It Down',
           ),
+
+          // second container
           Container(
-            margin: EdgeInsets.all(30),
-            height: 300,
+            height: 400,
+            margin: const EdgeInsets.all(29),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-                width: 2.0, // Adjust the border width as needed
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black
-                      .withOpacity(0.2), // Adjust the shadow color and opacity
-                  spreadRadius: 2, // Adjust the spread radius
-                  blurRadius: 4, // Adjust the blur radius
-                  offset: Offset(0, 2), // Adjust the shadow offset
-                ),
-              ],
-            ),
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.white24,
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  )
+                ]),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Fill out the information below in order to access your account',
@@ -101,11 +114,11 @@ class _LoginState extends State<Login> {
                 // Email
                 Container(
                   child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your Email';
                       }
-
                       return null;
                     },
                     controller: _emailController,
@@ -113,19 +126,23 @@ class _LoginState extends State<Login> {
                     autofocus: true,
                     obscureText: false,
                     decoration: InputDecoration(
-                        hintText: 'Email',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _emailController.clear();
-                            },
-                            icon: const Icon(Icons.clear))),
+                      border: const OutlineInputBorder(),
+                      // decoration box
+                      labelText: 'Email',
+
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            _emailController.clear();
+                          },
+                          icon: const Icon(Icons.clear)),
+                    ),
                     keyboardType: TextInputType.emailAddress,
                   ),
                 ),
                 // Password
                 Container(
                   child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your Password';
@@ -138,7 +155,7 @@ class _LoginState extends State<Login> {
                     autofocus: true,
                     obscureText: _isObscure,
                     decoration: InputDecoration(
-                      hintText: 'Password',
+                      labelText: 'Password',
                       alignLabelWithHint: false,
                       border: const OutlineInputBorder(),
                       suffixIcon: InkWell(
@@ -159,15 +176,52 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    checklogin(_emailController.text, _passwordController.text);
-                  },
-                  child: const Text('Sign In'),
+
+                // Sign In Button
+                SizedBox(
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      checklogin(
+                          _emailController.text, _passwordController.text);
+                    },
+                    child: const Text('Sign In'),
+                  ),
                 ),
+                // Display Error Message
+
                 const Text(
                   'Or Sign in with',
                 ),
+
+                // Sign In with Google
+                SizedBox(
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ClipOval(
+                          child: Image.network(
+                            'https://cdn-teams-slug.flaticon.com/google.jpg', // Replace with the path to your Google logo image asset
+                            height: 24,
+                            width: 24,
+                          ),
+                        ),
+                        const Text('Continue with Google'),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an Account?"),
+                    TextButton(onPressed: () => {}, child: Text('Sign Up Here'))
+                  ],
+                )
               ],
             ),
           )

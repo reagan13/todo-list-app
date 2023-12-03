@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list_application/authentication/login/login-raw1.dart';
-import 'package:todo_list_application/authentication/login/login.dart';
+import 'package:todo_list_application/authentication/login/authenticator.dart';
 import 'package:todo_list_application/introduction/cover_page.dart';
 import 'package:todo_list_application/introduction/page_1.dart';
 import 'package:todo_list_application/introduction/page_2.dart';
@@ -16,6 +15,7 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   final PageController _pageController = PageController(initialPage: 0);
 
+  // ignore: unused_field
   int _activePage = 0;
 
   final List<Widget> _pages = [
@@ -23,6 +23,7 @@ class _OnboardingState extends State<Onboarding> {
     const Page1(),
     const Page2(),
     const Page3(),
+    Authenticator()
   ];
   @override
   Widget build(BuildContext context) {

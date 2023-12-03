@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/authentication/login/login.dart';
-import 'package:todo_list_application/authentication/login/login-raw1.dart';
 import 'package:todo_list_application/authentication/login/pageLogout.dart';
-import 'package:todo_list_application/introduction/onboarding.dart';
-import 'package:todo_list_application/screen/homepage.dart';
 
 class Authenticator extends StatefulWidget {
   const Authenticator({super.key});
