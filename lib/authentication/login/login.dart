@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/authentication/singup/signup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -13,14 +14,17 @@ class Login extends StatefulWidget {
 final _keyForm = GlobalKey<FormState>();
 
 class _LoginState extends State<Login> {
+  // intialize strings
   String email = "";
   String password = "";
 
+  // initialize text controller
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  FocusNode _emailFocusNode = FocusNode();
-  FocusNode _passwordFocusNode = FocusNode();
+  // initialize focus node
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
 
   bool _isObscure = true;
   late String errormessage;
@@ -35,23 +39,22 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
+  // Display Show Error Message
   void showErrorMessage(String message) {
-    // Display the error message to the user
-    // You can use a SnackBar, AlertDialog, or any other UI element
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
 
+  // Check Login Method
   Future checklogin(username, password) async {
     showDialog(
       context: context,
@@ -84,7 +87,6 @@ class _LoginState extends State<Login> {
       setState(() {
         errormessage = e.message.toString();
       });
-      // Show the error message in the UI (add this if it's not present in your code)
     }
     Navigator.pop(context);
   }
@@ -150,6 +152,7 @@ class _LoginState extends State<Login> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                 ),
+
                 // Password
                 Container(
                   child: TextFormField(
@@ -193,13 +196,13 @@ class _LoginState extends State<Login> {
                   width: double.maxFinite,
                   child: ElevatedButton(
                     onPressed: () {
+                      // call check login method
                       checklogin(
                           _emailController.text, _passwordController.text);
                     },
                     child: const Text('Sign In'),
                   ),
                 ),
-                // Display Error Message
 
                 const Text(
                   'Or Sign in with',
@@ -230,7 +233,16 @@ class _LoginState extends State<Login> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Don't have an Account?"),
-                    TextButton(onPressed: () => {}, child: Text('Sign Up Here'))
+                    TextButton(
+                        onPressed: () => {
+                              // redirect to SignUp1
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignUp()),
+                              )
+                            },
+                        child: Text('Sign Up Here'))
                   ],
                 )
               ],
