@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +38,10 @@ class _HomepageState extends State<Homepage> {
             MaterialPageRoute(builder: (context) => const adddTask()),
           );
         },
-        backgroundColor: Colors.blueAccent,
-        child: const Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 91, 89, 247),
+        shape: CircleBorder(),
+        foregroundColor: Colors.white,
+        child: Icon(Icons.add),
       ),
     );
   }
