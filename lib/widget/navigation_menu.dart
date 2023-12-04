@@ -4,6 +4,7 @@ import 'package:todo_list_application/screen/calendar.dart';
 import 'package:todo_list_application/screen/homepage.dart';
 import 'package:todo_list_application/screen/profile.dart';
 import 'package:todo_list_application/screen/task.dart';
+import 'package:todo_list_application/task/task1.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -16,7 +17,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   int index = 0; // index sa pages/screens
   final screens = [
     const Homepage(),
-    const allTask(),
+    const task1(),
     const calendar(),
     const LogoutPage()
   ]; // different pages for routing
