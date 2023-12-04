@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/screen/addtask.dart';
 import 'package:todo_list_application/screen/calendar.dart';
 
 class NoTask extends StatelessWidget {
@@ -43,7 +44,7 @@ class NoTask extends StatelessWidget {
                   Navigator.push(
                     // go to create task page
                     context,
-                    MaterialPageRoute(builder: (context) => const calendar()),
+                    MaterialPageRoute(builder: (context) => const AddTask()),
                   );
                 },
               ),
