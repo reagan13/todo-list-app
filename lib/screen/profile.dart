@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:todo_list_application/screen/adddTask.dart';
 
 class profile extends StatefulWidget {
   const profile({super.key});

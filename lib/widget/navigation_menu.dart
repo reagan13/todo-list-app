@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/authentication/login/logout.dart';
 import 'package:todo_list_application/screen/calendar.dart';
 import 'package:todo_list_application/screen/homepage.dart';
 import 'package:todo_list_application/screen/profile.dart';
@@ -17,7 +18,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
     const Homepage(),
     const allTask(),
     const calendar(),
-    const profile()
+    const LogoutPage()
   ]; // different pages for routing
 
   @override

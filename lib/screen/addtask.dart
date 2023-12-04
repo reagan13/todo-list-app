@@ -3,29 +3,45 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list_application/screen/homepage.dart';
+import 'package:todo_list_application/screen/services/firestore.dart';
+import 'package:todo_list_application/widget/navigation_menu.dart';
 
-class adddTask extends StatefulWidget {
-  const adddTask({super.key});
+class AddTask extends StatefulWidget {
+  const AddTask({super.key});
 
   @override
-  State<adddTask> createState() => _adddTaskState();
+  State<AddTask> createState() => _AddTaskState();
 }
 
-class _adddTaskState extends State<adddTask> {
-  final _textTaskTitle = TextEditingController();
-  final _TaskContent = TextEditingController();
-  // final _dueDate = TextEditingController();
+class _AddTaskState extends State<AddTask> {
+  final FirestoreService firestoreService = FirestoreService();
+
+  void addTask() {
+    firestoreService.addTask(_taskTitle.text, _taskContent.text, _selectedDate,
+        _dueTime, chosenCategory);
+    Navigator.pop(context);
+
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => const NavigationMenu()));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Task Added Successfully"),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  final TextEditingController _taskTitle = TextEditingController();
+  final TextEditingController _taskContent = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   String _dueTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
-  String? _selectedTask = 'Important';
+  String? _category = 'Important';
+  String chosenCategory = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Color.fromARGB(255, 241, 244, 248),
-      //   toolbarHeight: 30,
-      // ),
       body: Container(
           padding: EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 10),
           child: SingleChildScrollView(
@@ -70,7 +86,7 @@ class _adddTaskState extends State<adddTask> {
 
                           //TextField Title
                           child: TextField(
-                            controller: _textTaskTitle,
+                            controller: _taskTitle,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(
                                   left: 10, top: 10, right: 10, bottom: 10),
@@ -90,7 +106,7 @@ class _adddTaskState extends State<adddTask> {
                               enabledBorder: InputBorder.none,
                               suffixIcon: IconButton(
                                 onPressed: () {
-                                  _textTaskTitle.clear();
+                                  _taskTitle.clear();
                                 },
                                 icon: const Icon(
                                   Icons.clear,
@@ -115,7 +131,7 @@ class _adddTaskState extends State<adddTask> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: TextField(
-                          controller: _TaskContent,
+                          controller: _taskContent,
                           maxLines:
                               null, // Set to null or a value greater than 1 for multi-line input
                           keyboardType:
@@ -287,7 +303,7 @@ class _adddTaskState extends State<adddTask> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10.0),
                                     child: DropdownButton<String>(
-                                      value: _selectedTask,
+                                      value: _category,
                                       style: GoogleFonts.montserrat(
                                         color: const Color.fromARGB(
                                             255, 128, 127, 127),
@@ -299,7 +315,8 @@ class _adddTaskState extends State<adddTask> {
                                       ),
                                       onChanged: (String? newValue) {
                                         setState(() {
-                                          _selectedTask = newValue!;
+                                          _category = newValue!;
+                                          chosenCategory = _category.toString();
                                         });
                                       },
                                       items: <String>[
@@ -364,13 +381,7 @@ class _adddTaskState extends State<adddTask> {
                                             ),
                                           ),
                                           TextButton(
-                                            onPressed: () {
-                                              // Handle delete button press
-                                              // Add your delete logic here
-
-                                              // Dismiss the dialog
-                                              Navigator.of(context).pop();
-                                            },
+                                            onPressed: addTask,
                                             child: Text(
                                               'Confirm',
                                               style: TextStyle(
