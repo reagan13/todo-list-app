@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/authentication/singup/signup.dart';
+import 'package:todo_list_application/main.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -19,6 +20,7 @@ class _LoginState extends State<Login> {
   String password = "";
 
   // initialize text controller
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -41,6 +43,7 @@ class _LoginState extends State<Login> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+
     super.dispose();
   }
 
@@ -52,43 +55,6 @@ class _LoginState extends State<Login> {
         duration: const Duration(seconds: 3),
       ),
     );
-  }
-
-  // Check Login Method
-  Future checklogin(username, password) async {
-    showDialog(
-      context: context,
-      useRootNavigator: false,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: username, password: password);
-      setState(() {
-        errormessage = "Invalid";
-      });
-    } on FirebaseAuthException catch (e) {
-      String errorMessage;
-
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided for that user.';
-      } else if (e.code == 'invalid-email') {
-        errorMessage = 'The email address is not valid.';
-      } else {
-        errorMessage = 'An error occurred: ${e.message}';
-      }
-      showErrorMessage(errorMessage);
-
-      setState(() {
-        errormessage = e.message.toString();
-      });
-    }
-    Navigator.pop(context);
   }
 
   @override
@@ -221,8 +187,7 @@ class _LoginState extends State<Login> {
                     child: ElevatedButton(
                       onPressed: () {
                         // call check login method
-                        checklogin(
-                            _emailController.text, _passwordController.text);
+                        signIn();
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Color.fromARGB(255, 91, 89, 247),
@@ -296,5 +261,26 @@ class _LoginState extends State<Login> {
         ],
       ),
     );
+  }
+
+  // Sign In Method
+  Future signIn() async {
+    // show circular progress indicator
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(child: CircularProgressIndicator()));
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+      showErrorMessage('Successfully Log In');
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = e.code.toString();
+      showErrorMessage(errorMessage);
+    }
+    // Navigator.of(context) not working!
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }

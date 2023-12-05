@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unused_element
 
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/task/editTask.dart';
 
 class task1 extends StatefulWidget {
   const task1({super.key});
@@ -42,7 +43,10 @@ class _task1State extends State<task1> {
                       onLongPress: _handLongPress,
                       //CheckBox hide
                       onDoubleTap: _handleDoubleTap,
-                      onTap: _handleOntap,
+                      onTap: () {
+                        // show add task
+                        showTask(context);
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Container(
@@ -179,14 +183,29 @@ class _task1State extends State<task1> {
         })
       };
 //checkbox
-  void _handleOntap() => {
-        isChecked
-            ? null // Disable onTap when isChecked is true
-            : () => {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => Tasks()),
-                  // );
+  void _handleOntap() => {};
+}
+
+Future<dynamic> showTask(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.orangeAccent,
+          title: Text('Title task'),
+          content: Text('description'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditTask()),
+                  );
                 },
-      };
+                child: Text('Edit Task')),
+            TextButton(onPressed: () {}, child: Text('Close'))
+          ],
+        );
+      });
 }

@@ -21,16 +21,16 @@ class _AuthenticatorState extends State<Authenticator> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(
-              child: Text('Something went wrong!'),
+              child: Text('Something Went Wrong'),
             );
           } else if (snapshot.hasData) {
+            // Redirect if user is already logged in
             return const NavigationMenu();
           } else {
+            // Redirect to log in
             return const Login();
           }
         },

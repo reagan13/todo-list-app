@@ -15,8 +15,10 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  // Intialize the firestore
   final FirestoreService firestoreService = FirestoreService();
 
+  // Add Task
   void addTask() {
     firestoreService.addTask(_taskTitle.text, _taskContent.text, _selectedDate,
         _dueTime, chosenCategory);
@@ -32,6 +34,7 @@ class _AddTaskState extends State<AddTask> {
     );
   }
 
+  // Initialize controller
   final TextEditingController _taskTitle = TextEditingController();
   final TextEditingController _taskContent = TextEditingController();
   DateTime _selectedDate = DateTime.now();
