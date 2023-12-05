@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, prefer_const_constructors
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -99,153 +99,198 @@ class _LoginState extends State<Login> {
         children: [
           // first container
           const Text(
-            'Welcome to List It Down',
+            'List It Down',
+            style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 69, 69, 69)),
           ),
 
           // second container
           Container(
-            height: 400,
-            margin: const EdgeInsets.all(29),
+            height: 500,
+            margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
+                color: Colors.white,
+                // border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
                   BoxShadow(
-                    color: Colors.white24,
-                    spreadRadius: 5,
-                    blurRadius: 7,
+                    color: Color.fromARGB(60, 0, 0, 0),
+                    blurRadius: 4,
                     offset: Offset(0, 3),
                   )
                 ]),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Fill out the information below in order to access your account',
-                ),
-
-                // Email
-                Container(
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Email';
-                      }
-                      return null;
-                    },
-                    controller: _emailController,
-                    focusNode: _emailFocusNode,
-                    autofocus: true,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      // decoration box
-                      labelText: 'Email',
-
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            _emailController.clear();
-                          },
-                          icon: const Icon(Icons.clear)),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
+            child: Padding(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'WELCOME',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 69, 69, 69)),
                   ),
-                ),
+                  const Text(
+                    'Fill out the information below in order to access your account',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 69, 69, 69)),
+                  ),
 
-                // Password
-                Container(
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Password';
-                      }
+                  // Email
+                  Container(
+                    child: TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Email';
+                        }
+                        return null;
+                      },
+                      controller: _emailController,
+                      focusNode: _emailFocusNode,
+                      autofocus: true,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        // decoration box
+                        labelText: 'Email',
+                        filled: true,
+                        fillColor: const Color.fromARGB(255, 241, 244, 248),
 
-                      return null;
-                    },
-                    controller: _passwordController,
-                    focusNode: _passwordFocusNode,
-                    autofocus: true,
-                    obscureText: _isObscure,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      alignLabelWithHint: false,
-                      border: const OutlineInputBorder(),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        },
-                        focusNode: FocusNode(skipTraversal: true),
-                        child: Icon(
-                          _isObscure
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: const Color(0xFF57636C),
-                          size: 25,
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              _emailController.clear();
+                            },
+                            icon: const Icon(Icons.clear)),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                  ),
+
+                  // Password
+                  Container(
+                    child: TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Password';
+                        }
+
+                        return null;
+                      },
+                      controller: _passwordController,
+                      focusNode: _passwordFocusNode,
+                      autofocus: true,
+                      obscureText: _isObscure,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        filled: true,
+                        fillColor: const Color.fromARGB(255, 241, 244, 248),
+                        alignLabelWithHint: false,
+                        border: const OutlineInputBorder(),
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          },
+                          focusNode: FocusNode(skipTraversal: true),
+                          child: Icon(
+                            _isObscure
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: const Color(0xFF57636C),
+                            size: 25,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
 
-                // Sign In Button
-                SizedBox(
-                  width: double.maxFinite,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // call check login method
-                      checklogin(
-                          _emailController.text, _passwordController.text);
-                    },
-                    child: const Text('Sign In'),
-                  ),
-                ),
-
-                const Text(
-                  'Or Sign in with',
-                ),
-
-                // Sign In with Google
-                SizedBox(
-                  width: double.maxFinite,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ClipOval(
-                          child: Image.network(
-                            'https://cdn-teams-slug.flaticon.com/google.jpg', // Replace with the path to your Google logo image asset
-                            height: 24,
-                            width: 24,
-                          ),
-                        ),
-                        const Text('Continue with Google'),
-                      ],
+                  // Sign In Button
+                  SizedBox(
+                    height: 40,
+                    width: double.maxFinite,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // call check login method
+                        checklogin(
+                            _emailController.text, _passwordController.text);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 91, 89, 247),
+                      ),
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontSize: 14),
+                      ),
                     ),
                   ),
-                ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Don't have an Account?"),
-                    TextButton(
-                        onPressed: () => {
-                              // redirect to SignUp1
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignUp()),
-                              )
-                            },
-                        child: Text('Sign Up Here'))
-                  ],
-                )
-              ],
+                  const Text(
+                    'Or Sign in with',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 87, 99, 108),
+                    ),
+                  ),
+
+                  // Sign In with Google
+                  SizedBox(
+                    height: 35,
+                    width: double.maxFinite,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipOval(
+                            child: Image.network(
+                              'https://cdn-teams-slug.flaticon.com/google.jpg', // Replace with the path to your Google logo image asset
+                              height: 24,
+                              width: 24,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          const Text('Continue with Google'),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an Account?",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 87, 99, 108),
+                        ),
+                      ),
+                      TextButton(
+                          onPressed: () => {
+                                // redirect to SignUp1
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const SignUp()),
+                                )
+                              },
+                          child: Text('Sign Up Here'))
+                    ],
+                  )
+                ],
+              ),
             ),
           )
         ],
