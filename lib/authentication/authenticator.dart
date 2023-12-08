@@ -2,9 +2,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list_application/authentication/login/login.dart';
+import 'package:todo_list_application/authentication/login.dart';
 import 'package:todo_list_application/screen/homepage.dart';
-import 'package:todo_list_application/widget/navigation_menu.dart';
 
 class Authenticator extends StatefulWidget {
   const Authenticator({super.key});
@@ -28,7 +27,7 @@ class _AuthenticatorState extends State<Authenticator> {
             );
           } else if (snapshot.hasData) {
             // Redirect if user is already logged in
-            return const NavigationMenu();
+            return const Homepage();
           } else {
             // Redirect to log in
             return const Login();

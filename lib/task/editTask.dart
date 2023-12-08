@@ -3,8 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:todo_list_application/screen/services/firestore.dart';
-import 'package:todo_list_application/widget/navigation_menu.dart';
+import 'package:todo_list_application/task/addtask.dart';
 
 class EditTask extends StatefulWidget {
   const EditTask({super.key});
@@ -15,23 +14,22 @@ class EditTask extends StatefulWidget {
 
 class _EditTaskState extends State<EditTask> {
   // Intialize the firestore
-  final FirestoreService firestoreService = FirestoreService();
 
   // Add Task
-  void addTask() {
-    firestoreService.addTask(_taskTitle.text, _taskContent.text, _selectedDate,
-        _dueTime, chosenCategory);
-    Navigator.pop(context);
+  // void addTask() {
+  //   firestoreService.addTask(_taskTitle.text, _taskContent.text, _selectedDate,
+  //       _dueTime, chosenCategory);
+  //   Navigator.pop(context);
 
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const NavigationMenu()));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Task Added Successfully"),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
+  //   Navigator.pushReplacement(context,
+  //       MaterialPageRoute(builder: (context) => const NavigationMenu()));
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text("Task Added Successfully"),
+  //       duration: const Duration(seconds: 3),
+  //     ),
+  //   );
+  // }
 
   // Initialize controller
   final TextEditingController _taskTitle = TextEditingController();
@@ -372,7 +370,7 @@ class _EditTaskState extends State<EditTask> {
                                           ),
                                         ),
                                         TextButton(
-                                          onPressed: addTask,
+                                          onPressed: () {},
                                           child: Text(
                                             'Confirm',
                                             style: TextStyle(

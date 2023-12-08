@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list_application/screen/services/firestore.dart';
-import 'package:todo_list_application/widget/no_task.dart';
+import 'package:todo_list_application/services/firestoreService.dart';
+import 'package:todo_list_application/task/addtask.dart';
+import 'package:todo_list_application/task/no_task.dart';
+import 'package:todo_list_application/task/task1.dart';
 
 class ShowTask extends StatefulWidget {
   const ShowTask({super.key});
@@ -15,43 +17,53 @@ class _ShowTaskState extends State<ShowTask> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text('List It Down'),
-            actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
-          ),
-          body: StreamBuilder<QuerySnapshot>(
-            stream: firestoreService.getTaskStream(),
-            builder: (context, snapshot) {
-              //  if we have data, get all the docs
-              if (snapshot.hasData) {
-                List taskList = snapshot.data!.docs;
+    return Scaffold(
+      // display tasks
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirestoreService().stream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List taskList = snapshot.data!.docs;
 
-                // display as list
+            // display as list
+            return ListView.builder(
+                itemCount: taskList.length,
+                itemBuilder: (context, index) {
+                  // get each indivudal doc
+                  DocumentSnapshot document = taskList[index];
+                  String docId = document.id;
+                  // get tak from each doc
+                  Map<String, dynamic> data =
+                      document.data() as Map<String, dynamic>;
+                  String taskText = data['title'];
+                  String taskContent = data['description'];
 
-                return ListView.builder(
-                    itemCount: taskList.length,
-                    itemBuilder: (context, index) {
-                      // get each individual doc
-                      DocumentSnapshot document = taskList[index];
-                      String docID = document.id;
-
-                      // get not from each doc
-                      Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
-                      String taskText = data['task'];
-
-                      //display as list title
-                      return ListTile(
-                        title: Text(taskText),
-                      );
-                    });
-              } else {
-                return NoTask();
-              }
-            },
-          )),
+                  // display as list tile
+                  return ListTile(
+                    title: Text(taskText),
+                    subtitle: Text(taskContent),
+                    trailing: Icon(Icons.settings),
+                  );
+                });
+          } else {
+            // Placeholder or loading indicator when snapshot has no data
+            return ShowTask();
+          }
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add your FloatingActionButton onPressed code here!
+          // For example, you can navigate to another page.
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const AddTask()));
+        },
+        backgroundColor: Color.fromARGB(255, 91, 89, 247),
+        shape: CircleBorder(),
+        foregroundColor: Colors.white,
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

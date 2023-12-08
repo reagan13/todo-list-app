@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names, unnecessary_null_comparison
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list_application/screen/homepage.dart';
-import 'package:todo_list_application/screen/services/firestore.dart';
-import 'package:todo_list_application/widget/navigation_menu.dart';
+import 'package:todo_list_application/services/firestoreService.dart';
 
 class AddTask extends StatefulWidget {
   const AddTask({super.key});
@@ -15,29 +16,17 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  final user = FirebaseAuth.instance.currentUser!;
+
   // Intialize the firestore
-  final FirestoreService firestoreService = FirestoreService();
 
-  // Add Task
-  void addTask() {
-    firestoreService.addTask(_taskTitle.text, _taskContent.text, _selectedDate,
-        _dueTime, chosenCategory);
-    Navigator.pop(context);
-
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const NavigationMenu()));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Task Added Successfully"),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
+  final db = FirebaseFirestore.instance;
 
   // Initialize controller
   final TextEditingController _taskTitle = TextEditingController();
   final TextEditingController _taskContent = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+
   String _dueTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String? _category = 'Important';
   String chosenCategory = "";
@@ -384,7 +373,6 @@ class _AddTaskState extends State<AddTask> {
                                             ),
                                           ),
                                           TextButton(
-                                            onPressed: addTask,
                                             child: Text(
                                               'Confirm',
                                               style: TextStyle(
@@ -392,6 +380,30 @@ class _AddTaskState extends State<AddTask> {
                                                     255, 91, 89, 247),
                                               ),
                                             ),
+                                            onPressed: () {
+                                              FirestoreService().addTask(
+                                                  _taskTitle.text.trim(),
+                                                  _taskContent.text.trim(),
+                                                  _selectedDate.toString(),
+                                                  _dueTime,
+                                                  chosenCategory);
+                                              // FirestoreService().displayTask();
+                                              Navigator.pop(context);
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const Homepage()));
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      "Task Added Successfully"),
+                                                  duration: const Duration(
+                                                      seconds: 3),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ],
                                       );

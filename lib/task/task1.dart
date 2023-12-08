@@ -26,8 +26,8 @@ class _task1State extends State<task1> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: const Text(
-                    'Current Tasks',
+                  child: Text(
+                    'as',
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,

@@ -30,4 +30,14 @@ class _LogoutPageState extends State<LogoutPage> {
       ),
     );
   }
+
+  // Display Error Message
+  void showErrorMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(user.uid),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 }

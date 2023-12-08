@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list_application/authentication/login/login.dart';
+import 'package:todo_list_application/authentication/login.dart';
 import 'package:todo_list_application/main.dart';
+import 'package:todo_list_application/services/firestoreService.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -375,52 +376,48 @@ class _SignUpState extends State<SignUp> {
 
   // Sign Up
   Future signUp() async {
-    try {
-      // show circular progress indicator
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => Center(child: CircularProgressIndicator()));
-      // Create User
-      if (passwordConfirmed()) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim());
+    if (passwordConfirmed()) {
+      try {
+        // show circular progress indicator
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => Center(child: CircularProgressIndicator()));
+        // Create User
+        if (passwordConfirmed()) {
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim());
 
-        // Add user details
-        addUserData(_firstNameController.text.trim(),
-            _lastNameController.text.trim(), _emailController.text.trim());
+          await FirestoreService().createUser(
+              _emailController.text.trim(),
+              _firstNameController.text.trim(),
+              _lastNameController.text.trim());
+        }
+        Navigator.pop(context);
         showErrorMessage('Sign Up Succesfully');
-        // Navigator.of(context) not working!
-        navigatorKey.currentState!.popUntil((route) => route.isFirst);
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage1 = e.code.toString();
-      print(errorMessage1);
-      if (errorMessage1 == 'invalid-email') {
-        _emailController.clear();
-        showErrorMessage(errorMessage1);
-      } else if (errorMessage1 == 'weak-password') {
-        showErrorMessage('Weak Password');
-      } else if (errorMessage1 == 'email-already-in-use') {
-        showErrorMessage('Email already in use');
-      } else if (errorMessage1 == 'missing-password') {
-        showErrorMessage('Enter your Password');
-      }
+      } on FirebaseAuthException catch (e) {
+        String errorMessage1 = e.code.toString();
+        print(errorMessage1);
+        if (errorMessage1 == 'invalid-email') {
+          _emailController.clear();
+          showErrorMessage(errorMessage1);
+        } else if (errorMessage1 == 'weak-password') {
+          showErrorMessage('Weak Password');
+        } else if (errorMessage1 == 'email-already-in-use') {
+          showErrorMessage('Email already in use');
+        } else if (errorMessage1 == 'missing-password') {
+          showErrorMessage('Enter your Password');
+        }
 
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+      }
       _passwordController.clear();
       _confirmPasswordController.clear();
     }
-    // Close the dialog
-    Navigator.of(context).pop();
-  }
-
-  Future addUserData(String firstName, String lastName, String email) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'First Name': firstName,
-      'Last Name': lastName,
-      'Email': email,
-    });
+    // Navigator.of(context) not working!
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
   bool passwordConfirmed() {
