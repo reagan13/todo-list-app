@@ -23,7 +23,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   static const List<Widget> _widgetOptions = <Widget>[
     ShowTask(),
-    NoTask(),
+    task1(),
     profile(),
     LogoutPage()
   ];

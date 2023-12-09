@@ -197,11 +197,11 @@ Future<dynamic> showTask(BuildContext context) {
           actions: [
             TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditTask()),
-                  );
+                  // Navigator.pop(context);
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => EditTask()),
+                  // );
                 },
                 child: Text('Edit Task')),
             TextButton(onPressed: () {}, child: Text('Close'))

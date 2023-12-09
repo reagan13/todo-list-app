@@ -10,8 +10,6 @@ class Display extends StatefulWidget {
 class _DisplayState extends State<Display> {
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('s'),
-    );
+    return Scaffold();
   }
 }

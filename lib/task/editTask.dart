@@ -1,43 +1,61 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names, unnecessary_null_comparison
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list_application/screen/homepage.dart';
+import 'package:todo_list_application/services/firestoreService.dart';
 import 'package:todo_list_application/task/addtask.dart';
+import 'package:todo_list_application/task/showtask.dart';
 
 class EditTask extends StatefulWidget {
-  const EditTask({super.key});
+  // const EditTask({super.key});
+
+  final String TaskTitle;
+  final String TaskContent;
+  final String TaskCategory;
+  final String TaskTime;
+  final String TaskDate;
+  final String TaskTimeStamp;
+  final String TaskDocId;
+
+  const EditTask({
+    required this.TaskTitle,
+    required this.TaskContent,
+    required this.TaskCategory,
+    required this.TaskTime,
+    required this.TaskDate,
+    required this.TaskTimeStamp,
+    required this.TaskDocId,
+    super.key,
+  });
 
   @override
   State<EditTask> createState() => _EditTaskState();
 }
 
 class _EditTaskState extends State<EditTask> {
-  // Intialize the firestore
-
-  // Add Task
-  // void addTask() {
-  //   firestoreService.addTask(_taskTitle.text, _taskContent.text, _selectedDate,
-  //       _dueTime, chosenCategory);
-  //   Navigator.pop(context);
-
-  //   Navigator.pushReplacement(context,
-  //       MaterialPageRoute(builder: (context) => const NavigationMenu()));
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text("Task Added Successfully"),
-  //       duration: const Duration(seconds: 3),
-  //     ),
-  //   );
-  // }
-
   // Initialize controller
-  final TextEditingController _taskTitle = TextEditingController();
-  final TextEditingController _taskContent = TextEditingController();
+  late TextEditingController _taskTitle;
+  late TextEditingController _taskContent;
+
   DateTime _selectedDate = DateTime.now();
   String _dueTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
-  String? _category = 'Important';
-  String chosenCategory = "";
+  String? _category;
+  String chosenCategory = "Important";
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controllers with initial values
+    _taskTitle = TextEditingController(text: widget.TaskTitle);
+    _taskContent = TextEditingController(text: widget.TaskContent);
+    _selectedDate = DateTime.parse(widget.TaskDate);
+    _category = widget.TaskCategory;
+    _dueTime = widget.TaskTime;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -370,7 +388,32 @@ class _EditTaskState extends State<EditTask> {
                                           ),
                                         ),
                                         TextButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            FirestoreService().updateTask(
+                                                _taskTitle.text.trim(),
+                                                _taskContent.text.trim(),
+                                                _selectedDate.toString(),
+                                                _dueTime,
+                                                chosenCategory,
+                                                widget.TaskDocId);
+
+                                            // FirestoreService().displayTask();
+                                            Navigator.pop(context);
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const Homepage()));
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    "Task Edited Successfully"),
+                                                duration:
+                                                    const Duration(seconds: 3),
+                                              ),
+                                            );
+                                          },
                                           child: Text(
                                             'Confirm',
                                             style: TextStyle(
@@ -395,7 +438,7 @@ class _EditTaskState extends State<EditTask> {
                                 ),
                               ),
                               child: Text(
-                                'Edit',
+                                'Save ',
                                 style: TextStyle(
                                   fontSize: 16, // Set font size
                                 ),
@@ -439,6 +482,11 @@ class _EditTaskState extends State<EditTask> {
           )),
       backgroundColor: Color.fromARGB(255, 241, 244, 248),
     );
+  }
+
+  // assign text controller
+  getDetails(String title) async {
+    _taskTitle.text = title;
   }
 
 //Due Date

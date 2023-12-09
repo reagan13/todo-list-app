@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/services/firestoreService.dart';
 import 'package:todo_list_application/task/addtask.dart';
+import 'package:todo_list_application/task/editTask.dart';
 import 'package:todo_list_application/task/no_task.dart';
-import 'package:todo_list_application/task/task1.dart';
 
 class ShowTask extends StatefulWidget {
   const ShowTask({super.key});
@@ -14,6 +14,12 @@ class ShowTask extends StatefulWidget {
 
 class _ShowTaskState extends State<ShowTask> {
   final FirestoreService firestoreService = FirestoreService();
+  String taskText = "";
+  String taskContent = "";
+  String taskCategory = "";
+  String taskTime = "";
+  String taskDate = "";
+  String taskTimeStamp = "";
 
   @override
   Widget build(BuildContext context) {
@@ -29,20 +35,71 @@ class _ShowTaskState extends State<ShowTask> {
             return ListView.builder(
                 itemCount: taskList.length,
                 itemBuilder: (context, index) {
+                  var docId = snapshot.data!.docs[index].id;
                   // get each indivudal doc
                   DocumentSnapshot document = taskList[index];
-                  String docId = document.id;
-                  // get tak from each doc
+                  // String docId = document.id;
+
+                  // get task from each doc
                   Map<String, dynamic> data =
                       document.data() as Map<String, dynamic>;
                   String taskText = data['title'];
                   String taskContent = data['description'];
+                  String taskCategory = data['category'];
+                  String taskTime = data['time'];
+                  String taskDate = data['date'];
+                  String taskTimeStamp = data['timestamp'].toString();
 
                   // display as list tile
                   return ListTile(
                     title: Text(taskText),
                     subtitle: Text(taskContent),
-                    trailing: Icon(Icons.settings),
+                    onTap: () {
+                      // tap to show task\
+                      showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(taskText),
+                            content: Column(
+                              children: [
+                                Text("Description: $taskContent"),
+                                Text("Category: $taskCategory"),
+                                Text("Due Time: $taskTime"),
+                                Text("Date: $taskDate"),
+                                Text("Task Created: $taskTimeStamp"),
+                              ],
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Edit'),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditTask(
+                                              TaskTitle: taskText,
+                                              TaskContent: taskContent,
+                                              TaskCategory: taskCategory,
+                                              TaskTime: taskTime,
+                                              TaskDate: taskDate,
+                                              TaskTimeStamp: taskTimeStamp,
+                                              TaskDocId: docId)));
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('Close'),
+                                onPressed: () {
+                                  // Dismiss the dialog
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    },
                   );
                 });
           } else {
@@ -51,6 +108,7 @@ class _ShowTaskState extends State<ShowTask> {
           }
         },
       ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {

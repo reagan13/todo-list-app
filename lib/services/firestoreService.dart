@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ class FirestoreService {
   Future createUser(String email, String fname, String lname) async {
     try {
       await firestoreService.collection('users').doc(user.uid).set({
-        "id": user.uid,
+        "user id": user.uid,
         "email": email,
         "First Name": fname,
         "Last Name": lname,
@@ -30,7 +32,7 @@ class FirestoreService {
           .doc(user.uid)
           .collection("tasks")
           .add({
-        "id": user.uid,
+        "user id": user.uid,
         "title": title,
         "description": content,
         "date": date,
@@ -44,6 +46,8 @@ class FirestoreService {
       return true;
     }
   }
+
+  // Read
 
   // Read
 
@@ -72,5 +76,79 @@ class FirestoreService {
         .collection("tasks")
         .orderBy('timestamp')
         .snapshots();
+  }
+
+  // update task
+  Future updateTask(String title, String content, String date, String time,
+      String category, String docId) async {
+    firestoreService
+        .collection('users')
+        .doc(user.uid)
+        .collection('tasks')
+        .doc(docId)
+        .update({
+      // Your update fields here
+      "user id": user.uid,
+      "task id": docId,
+      "title": title,
+      "description": content,
+      "date": date,
+      "time": time,
+      "category": category,
+      "timestamp(updated task)": Timestamp.now(),
+    });
+    archiveUpdateTask(title, content, date, time, category, docId);
+  }
+
+  // archive update task
+  Future archiveUpdateTask(String title, String content, String date,
+      String time, String category, String docId) async {
+    await firestoreService
+        .collection('users')
+        .doc(user.uid)
+        .collection('tasks')
+        .doc(docId)
+        .collection('lists of updated task')
+        .add({
+      // Your update fields here
+      "user id": user.uid,
+      "task id": docId,
+      "title": title,
+      "description": content,
+      "date": date,
+      "time": time,
+      "category": category,
+      "timestamp(updated task)": Timestamp.now(),
+    });
+  }
+
+  Future deleteTask(String docId) async {
+    firestoreService
+        .collection("users")
+        .doc(user.uid)
+        .collection("tasks")
+        .doc(docId)
+        .delete();
+  }
+
+  // Archive task
+  Future archiveTask(String title, String content, String date, String time,
+      String category, String docId) async {
+    firestoreService
+        .collection('archive')
+        .doc(user.uid)
+        .collection('archive tasks')
+        .doc(docId)
+        .set({
+      // Your update fields here
+      "user id": user.uid,
+      "task id": docId,
+      "title": title,
+      "description": content,
+      "date": date,
+      "time": time,
+      "category": category,
+      "timestamp(updated task)": Timestamp.now(),
+    });
   }
 }
