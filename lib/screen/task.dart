@@ -26,37 +26,57 @@ class _TaskState extends State<Task> {
       initialIndex: 1,
       length: 3,
       child: Scaffold(
-        body: TabBarView(
-          children: <Widget>[
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                height: 500,
-                width: 370,
-                color: Colors.amber,
-                child: Text('Priority Content'),
-              ),
+        body: Column(
+          children: [
+            TabBar(
+              tabs: <Widget>[
+                Tab(
+                  child: Text("Priority Task"),
+                ),
+                Tab(
+                  child: Text("Normal Task"),
+                ),
+                Tab(
+                  child: Text("Least Priority"),
+                ),
+              ],
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                height: 500,
-                width: 370,
-                color: Colors.blueAccent,
-                child: Text('Normal  Content'),
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                height: 500,
-                width: 370,
-                color: Colors.red,
-                child: Text('Least Priority Content'),
+            Expanded(
+              child: TabBarView(
+                children: <Widget>[
+                  SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Container(
+                      height: 500,
+                      width: 370,
+                      color: Colors.amber,
+                      child: Text('Priority Content'),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Container(
+                      height: 500,
+                      width: 370,
+                      color: Colors.blueAccent,
+                      child: Text('Normal  Content'),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Container(
+                      height: 500,
+                      width: 370,
+                      color: Colors.red,
+                      child: Text('Least Priority Content'),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
+        backgroundColor: const Color.fromARGB(255, 241, 244, 248),
       ),
     );
   }

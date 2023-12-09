@@ -38,8 +38,8 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('List It Dow'),
-          backgroundColor: Colors.blueAccent,
+          title: Text('List It Down'),
+          backgroundColor: const Color.fromARGB(255, 241, 244, 248),
         ),
         body: Center(
           child: _widgetOptions[_selectedIndex],
