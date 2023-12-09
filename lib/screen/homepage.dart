@@ -9,7 +9,6 @@ import 'package:todo_list_application/task/addtask.dart';
 import 'package:todo_list_application/screen/calendar.dart';
 import 'package:todo_list_application/screen/task.dart';
 import 'package:todo_list_application/task/showtask.dart';
-import 'package:todo_list_application/task/task1.dart';
 
 import 'package:todo_list_application/task/no_task.dart';
 
@@ -23,7 +22,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   static const List<Widget> _widgetOptions = <Widget>[
     ShowTask(),
-    task1(),
+    Task(),
     profile(),
     LogoutPage()
   ];
@@ -37,72 +36,27 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 1,
-      length: 3,
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text('List It Down'),
-            bottom: const TabBar(
-              tabs: <Widget>[
-                Tab(
-                  child: Text("Priority Task"),
-                ),
-                Tab(
-                  child: Text("Normal Task"),
-                ),
-                Tab(
-                  child: Text("Least Priority"),
-                ),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('List It Dow'),
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: Center(
+          child: _widgetOptions[_selectedIndex],
+        ),
+        // Drawer
+        drawer: Drawer(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                buildHeader(context),
+                buildMenuItems(context),
               ],
             ),
           ),
-          body: TabBarView(
-            children: <Widget>[
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Container(
-                  height: 500,
-                  width: 370,
-                  color: Colors.amber,
-                  child: Text('Priority Content'),
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Container(
-                  height: 500,
-                  width: 370,
-                  color: Colors.blueAccent,
-                  child: Text('Normal  Content'),
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Container(
-                  height: 500,
-                  width: 370,
-                  color: Colors.red,
-                  child: Text('Least Priority Content'),
-                ),
-              ),
-            ],
-          ),
-
-          // Drawer
-          drawer: Drawer(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.zero,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  buildHeader(context),
-                  buildMenuItems(context),
-                ],
-              ),
-            ),
-          )),
-    );
+        ));
   }
 
   // Header widget

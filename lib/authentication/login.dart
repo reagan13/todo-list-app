@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/authentication/authenticator.dart';
 import 'package:todo_list_application/authentication/signup.dart';
 import 'package:todo_list_application/main.dart';
 
@@ -43,7 +44,6 @@ class _LoginState extends State<Login> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -270,18 +270,18 @@ class _LoginState extends State<Login> {
         context: context,
         barrierDismissible: false,
         builder: (context) => Center(child: CircularProgressIndicator()));
-
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
-
+      Navigator.pop(context);
       showErrorMessage('Successfully Log In');
     } on FirebaseAuthException catch (e) {
       String errorMessage = e.code.toString();
       showErrorMessage(errorMessage);
     }
-    // Navigator.of(context) not working!
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
+
+    // Navigator.of(context) not working!
   }
 }

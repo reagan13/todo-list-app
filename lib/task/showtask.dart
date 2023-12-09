@@ -28,7 +28,9 @@ class _ShowTaskState extends State<ShowTask> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirestoreService().stream(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
             List taskList = snapshot.data!.docs;
 
             // display as list
@@ -55,7 +57,6 @@ class _ShowTaskState extends State<ShowTask> {
                     title: Text(taskText),
                     subtitle: Text(taskContent),
                     onTap: () {
-                      // tap to show task\
                       showDialog(
                         context: context,
                         barrierDismissible: true,
