@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, unused_import, curly_braces_in_flow_control_structures
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/services/firestoreService.dart';
@@ -20,9 +22,29 @@ class _ShowTaskState extends State<ShowTask> {
   String taskTime = "";
   String taskDate = "";
   String taskTimeStamp = "";
+  bool isChecked = false;
+  bool showCheckbox = false;
+  Set<int> selectedIndex = Set<int>();
 
   @override
   Widget build(BuildContext context) {
+    //checkbox visibility true
+    void _handLongPress() {
+      setState(() {
+        showCheckbox = true;
+      });
+    }
+
+    //checkbox visibility false
+    void _handleDoubleTap() {
+      setState(() {
+        setState(() {
+          showCheckbox = false;
+          selectedIndex.clear();
+        });
+      });
+    }
+
     return Scaffold(
       // display tasks
       body: StreamBuilder<QuerySnapshot>(
@@ -53,54 +75,270 @@ class _ShowTaskState extends State<ShowTask> {
                   String taskTimeStamp = data['timestamp'].toString();
 
                   // display as list tile
-                  return ListTile(
-                    title: Text(taskText),
-                    subtitle: Text(taskContent),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text(taskText),
-                            content: Column(
-                              children: [
-                                Text("Description: $taskContent"),
-                                Text("Category: $taskCategory"),
-                                Text("Due Time: $taskTime"),
-                                Text("Date: $taskDate"),
-                                Text("Task Created: $taskTimeStamp"),
-                              ],
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('Edit'),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EditTask(
-                                              TaskTitle: taskText,
-                                              TaskContent: taskContent,
-                                              TaskCategory: taskCategory,
-                                              TaskTime: taskTime,
-                                              TaskDate: taskDate,
-                                              TaskTimeStamp: taskTimeStamp,
-                                              TaskDocId: docId)));
-                                },
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          child: GestureDetector(
+                            //showCheckBox
+                            onLongPress: () {
+                              _handLongPress();
+                            },
+                            //hideCheckBox
+                            onDoubleTap: () {
+                              _handleDoubleTap();
+                            },
+                            child: ListTile(
+                              title: Text(taskText),
+                              subtitle: Text(
+                                taskContent,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              TextButton(
-                                child: const Text('Close'),
-                                onPressed: () {
-                                  // Dismiss the dialog
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    },
+                              leading: showCheckbox
+                                  ? Checkbox(
+                                      value: selectedIndex.contains(index),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          if (value != null && value) {
+                                            selectedIndex.add(index);
+                                          } else {
+                                            selectedIndex.remove(index);
+                                          }
+                                        });
+                                      },
+                                      activeColor:
+                                          Color.fromARGB(255, 91, 89, 247),
+                                    )
+                                  : null,
+                              //mark as completed
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    //handle completed task
+                                  },
+                                  icon: Icon(
+                                    Icons.flag_outlined,
+                                    color: Colors.green,
+                                  )),
+                              //Modal Content
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        taskText,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            //Description
+                                            RichText(
+                                              text: TextSpan(
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Description: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  //$taskContent
+                                                  TextSpan(
+                                                    text: taskContent,
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            //Space
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            //Category
+                                            RichText(
+                                              text: TextSpan(
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Category: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  //$taskCategory
+                                                  TextSpan(
+                                                    text: taskCategory,
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            //Space
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            //Due Time
+                                            RichText(
+                                              text: TextSpan(
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Due Time: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  //$taskTime
+                                                  TextSpan(
+                                                    text: taskTime,
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            //Space
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            //taskDate
+                                            RichText(
+                                              text: TextSpan(
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Date: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  //$taskDate
+                                                  TextSpan(
+                                                    text: taskDate,
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            //Space
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            //taskDate
+                                            RichText(
+                                              text: TextSpan(
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Task Created: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  //$taskDate
+                                                  TextSpan(
+                                                    text: taskTimeStamp,
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditTask(
+                                                              TaskTitle:
+                                                                  taskText,
+                                                              TaskContent:
+                                                                  taskContent,
+                                                              TaskCategory:
+                                                                  taskCategory,
+                                                              TaskTime:
+                                                                  taskTime,
+                                                              TaskDate:
+                                                                  taskDate,
+                                                              TaskTimeStamp:
+                                                                  taskTimeStamp,
+                                                              TaskDocId:
+                                                                  docId)));
+                                            },
+                                            icon: Icon(
+                                              Icons.edit,
+                                              size: 28,
+                                              // color: Colors.red,
+                                            )),
+                                        IconButton(
+                                            onPressed: () {
+                                              //handle delete task content
+                                            },
+                                            icon: Icon(
+                                              Icons.delete,
+                                              size: 28,
+                                              // color: Colors.red,
+                                            )),
+                                        IconButton(
+                                          onPressed: () {
+                                            // Dismiss the dialog
+                                            Navigator.of(context).pop();
+                                          },
+                                          icon: Icon(
+                                            Icons.close,
+                                            size: 28.0,
+                                            // color: Color.fromARGB(
+                                            //     255, 91, 89, 247),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 });
           } else {
@@ -123,6 +361,7 @@ class _ShowTaskState extends State<ShowTask> {
         foregroundColor: Colors.white,
         child: Icon(Icons.add),
       ),
+      backgroundColor: const Color.fromARGB(255, 241, 244, 248),
     );
   }
 }
