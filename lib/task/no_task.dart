@@ -64,7 +64,6 @@ class NoTask extends StatelessWidget {
         onPressed: () {
           // Add your FloatingActionButton onPressed code here!
           // For example, you can navigate to another page.
-          FirestoreService().readTasks();
         },
         backgroundColor: Color.fromARGB(255, 91, 89, 247),
         shape: CircleBorder(),

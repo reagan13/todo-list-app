@@ -37,6 +37,7 @@ class FirestoreService {
         "description": content,
         "date": date,
         "time": time,
+        "complete": "not complete",
         "category": category,
         "timestamp": Timestamp.now(),
       });
@@ -48,40 +49,40 @@ class FirestoreService {
   }
 
   // Read
-
-  // Read
-
-  Future readTasks() async {
+  Future readTasks(Dt) async {
     firestoreService
         .collection("users")
         .doc(user.uid)
         .collection("tasks")
+        .where(
+          "complete",
+        )
         .get()
         .then(
       (querySnapshot) {
         print("Successfully completed");
         for (var docSnapshot in querySnapshot.docs) {
-          print('${docSnapshot.id} => ${docSnapshot.data()}');
+          print('${docSnapshot.id} => ${docSnapshot.data}');
         }
       },
       onError: (e) => print("Error completing: $e"),
     );
   }
 
-  // dispolay task
+  // display task
   Stream<QuerySnapshot> stream() {
     return firestoreService
         .collection("users")
         .doc(user.uid)
         .collection("tasks")
-        .orderBy('timestamp')
+        .where("complete", isNotEqualTo: "complete")
         .snapshots();
   }
 
   // update task
   Future updateTask(String title, String content, String date, String time,
       String category, String docId) async {
-    firestoreService
+    await firestoreService
         .collection('users')
         .doc(user.uid)
         .collection('tasks')
@@ -95,9 +96,8 @@ class FirestoreService {
       "date": date,
       "time": time,
       "category": category,
-      "timestamp(updated task)": Timestamp.now(),
     });
-    archiveUpdateTask(title, content, date, time, category, docId);
+    archiveDeletedTask(title, content, date, time, category, docId);
   }
 
   // archive update task
@@ -122,6 +122,7 @@ class FirestoreService {
     });
   }
 
+  // delete Task
   Future deleteTask(String docId) async {
     firestoreService
         .collection("users")
@@ -131,13 +132,13 @@ class FirestoreService {
         .delete();
   }
 
-  // Archive task
-  Future archiveTask(String title, String content, String date, String time,
-      String category, String docId) async {
+  // Archive Delete Task
+  Future archiveDeletedTask(String title, String content, String date,
+      String time, String category, String docId) async {
     firestoreService
         .collection('archive')
         .doc(user.uid)
-        .collection('archive tasks')
+        .collection('deleted task')
         .doc(docId)
         .set({
       // Your update fields here
@@ -148,7 +149,42 @@ class FirestoreService {
       "date": date,
       "time": time,
       "category": category,
-      "timestamp(updated task)": Timestamp.now(),
+      "timestamp": Timestamp.now(),
     });
+  }
+
+  //add task
+  Future<bool> markComplete(String title, String content, String date,
+      String time, String category, String docId) async {
+    try {
+      await firestoreService
+          .collection('users')
+          .doc(user.uid)
+          .collection('tasks')
+          .doc(docId)
+          .update({
+        // Your update fields here
+        "complete": "complete",
+      });
+      await firestoreService
+          .collection('archive')
+          .doc(user.uid)
+          .collection('completed task')
+          .doc(docId)
+          .set({
+        "user id": docId,
+        "title": title,
+        "description": content,
+        "date": date,
+        "time": time,
+        "category": category,
+        "complete": "complete",
+        "timestamp": Timestamp.now(),
+      });
+
+      return true;
+    } catch (e) {
+      return true;
+    }
   }
 }

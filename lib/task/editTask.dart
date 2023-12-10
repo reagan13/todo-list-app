@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list_application/main.dart';
 import 'package:todo_list_application/screen/homepage.dart';
 import 'package:todo_list_application/services/firestoreService.dart';
 import 'package:todo_list_application/task/addtask.dart';
@@ -378,6 +379,12 @@ class _EditTaskState extends State<EditTask> {
                                           onPressed: () {
                                             // Dismiss the dialog
                                             Navigator.of(context).pop();
+
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const ShowTask()));
                                           },
                                           child: Text(
                                             'Cancel',
@@ -397,13 +404,12 @@ class _EditTaskState extends State<EditTask> {
                                                 chosenCategory,
                                                 widget.TaskDocId);
 
-                                            // FirestoreService().displayTask();
-                                            Navigator.pop(context);
                                             Navigator.pushReplacement(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         const Homepage()));
+
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(

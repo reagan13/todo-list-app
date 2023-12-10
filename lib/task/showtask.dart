@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/screen/homepage.dart';
 import 'package:todo_list_application/services/firestoreService.dart';
 import 'package:todo_list_application/task/addtask.dart';
 import 'package:todo_list_application/task/editTask.dart';
@@ -24,6 +25,8 @@ class _ShowTaskState extends State<ShowTask> {
   String taskTimeStamp = "";
   bool isChecked = false;
   bool showCheckbox = false;
+
+  bool standardSelected = false;
   Set<int> selectedIndex = Set<int>();
 
   @override
@@ -119,13 +122,87 @@ class _ShowTaskState extends State<ShowTask> {
                                   : null,
                               //mark as completed
                               trailing: IconButton(
-                                  onPressed: () {
-                                    //handle completed task
-                                  },
-                                  icon: Icon(
-                                    Icons.flag_outlined,
-                                    color: Colors.green,
-                                  )),
+                                isSelected: standardSelected,
+                                onPressed: () {
+                                  //handle completed task
+                                  setState(() {
+                                    standardSelected = !standardSelected;
+                                  });
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Mark as Complete'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              // Dismiss the dialog
+                                              Navigator.of(context).pop();
+
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const ShowTask()));
+                                            },
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: const Color.fromARGB(
+                                                    255, 128, 127, 127),
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              FirestoreService().markComplete(
+                                                  taskText,
+                                                  taskContent,
+                                                  taskDate,
+                                                  taskTime,
+                                                  taskCategory,
+                                                  docId);
+
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const Homepage()));
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      "Task Mark Completed"),
+                                                  duration: const Duration(
+                                                      seconds: 3),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Confirm',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 91, 89, 247),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                selectedIcon: const Icon(
+                                  Icons.flag,
+                                  color: Colors.greenAccent,
+                                ),
+                                icon: Icon(
+                                  Icons.flag_outlined,
+                                  color: Colors.green,
+                                ),
+                              ),
+
                               //Modal Content
                               onTap: () {
                                 showDialog(
@@ -311,6 +388,80 @@ class _ShowTaskState extends State<ShowTask> {
                                         IconButton(
                                             onPressed: () {
                                               //handle delete task content
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text('Delete Task'),
+                                                    content: Text(
+                                                        'Are you sure you want to delete the task?'),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {},
+                                                        child: Text(
+                                                          'Cancel',
+                                                          style: TextStyle(
+                                                            color: const Color
+                                                                .fromARGB(255,
+                                                                128, 127, 127),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          FirestoreService()
+                                                              .deleteTask(
+                                                                  docId);
+                                                          FirestoreService()
+                                                              .archiveDeletedTask(
+                                                                  taskText,
+                                                                  taskContent,
+                                                                  taskDate,
+                                                                  taskTime,
+                                                                  taskCategory,
+                                                                  docId);
+
+                                                          // Dismiss the dialog
+                                                          Navigator.of(context)
+                                                              .pop();
+
+                                                          Navigator.pushReplacement(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const Homepage()));
+
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                  "Task Delete Successfully"),
+                                                              duration:
+                                                                  const Duration(
+                                                                      seconds:
+                                                                          3),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          'Confirm',
+                                                          style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    91,
+                                                                    89,
+                                                                    247),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
                                             },
                                             icon: Icon(
                                               Icons.delete,
