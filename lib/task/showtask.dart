@@ -121,86 +121,107 @@ class _ShowTaskState extends State<ShowTask> {
                                     )
                                   : null,
                               //mark as completed
-                              trailing: IconButton(
-                                isSelected: standardSelected,
-                                onPressed: () {
-                                  //handle completed task
-                                  setState(() {
-                                    standardSelected = !standardSelected;
-                                  });
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 25),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(taskCategory,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14)),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    isSelected: standardSelected,
+                                    onPressed: () {
+                                      //handle completed task
+                                      setState(() {
+                                        standardSelected = !standardSelected;
+                                      });
 
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Mark as Complete'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              // Dismiss the dialog
-                                              Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Mark as Complete'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  // Dismiss the dialog
+                                                  Navigator.of(context).pop();
 
-                                              Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const ShowTask()));
-                                            },
-                                            child: Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                color: const Color.fromARGB(
-                                                    255, 128, 127, 127),
-                                              ),
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              FirestoreService().markComplete(
-                                                  taskText,
-                                                  taskContent,
-                                                  taskDate,
-                                                  taskTime,
-                                                  taskCategory,
-                                                  docId);
-
-                                              Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const Homepage()));
-
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      "Task Mark Completed"),
-                                                  duration: const Duration(
-                                                      seconds: 3),
+                                                  Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const ShowTask()));
+                                                },
+                                                child: Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 128, 127, 127),
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                            child: Text(
-                                              'Confirm',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 91, 89, 247),
                                               ),
-                                            ),
-                                          ),
-                                        ],
+                                              TextButton(
+                                                onPressed: () {
+                                                  FirestoreService()
+                                                      .markComplete(
+                                                          taskText,
+                                                          taskContent,
+                                                          taskDate,
+                                                          taskTime,
+                                                          taskCategory,
+                                                          docId);
+
+                                                  Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const Homepage()));
+
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          "Task Mark Completed"),
+                                                      duration: const Duration(
+                                                          seconds: 3),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Text(
+                                                  'Confirm',
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 91, 89, 247),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                                selectedIcon: const Icon(
-                                  Icons.flag,
-                                  color: Colors.greenAccent,
-                                ),
-                                icon: Icon(
-                                  Icons.flag_outlined,
-                                  color: Colors.green,
-                                ),
+                                    selectedIcon: const Icon(
+                                      Icons.flag,
+                                      color: Colors.greenAccent,
+                                    ),
+                                    icon: Icon(
+                                      Icons.flag_outlined,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
                               ),
 
                               //Modal Content
