@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import, prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_field, sort_child_properties_last
 
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,7 @@ import 'package:todo_list_application/task/addtask.dart';
 import 'package:todo_list_application/screen/calendar.dart';
 import 'package:todo_list_application/screen/task.dart';
 import 'package:todo_list_application/task/showtask.dart';
-
+import 'package:badges/badges.dart' as badges;
 import 'package:todo_list_application/task/no_task.dart';
 
 class Homepage extends StatefulWidget {
@@ -22,9 +24,10 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   static const List<Widget> _widgetOptions = <Widget>[
     ShowTask(),
-    Task(),
     profile(),
-    LogoutPage()
+    Task(),
+    // LogoutPage(),
+    calendar(),
   ];
 
   int _selectedIndex = 0;
@@ -38,8 +41,27 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('List It Down'),
-          backgroundColor: const Color.fromARGB(255, 241, 244, 248),
+          backgroundColor: const Color.fromARGB(255, 241, 234, 255),
+          title: Center(
+              child: Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: Text('List It Down'.toUpperCase()),
+          )),
+
+          //NOTIFICATION
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: badges.Badge(
+                badgeContent: Text(
+                  //THE COUNT
+                  '3',
+                  style: TextStyle(color: Colors.white),
+                ),
+                child: Icon(Icons.notifications),
+              ),
+            )
+          ],
         ),
         body: Center(
           child: _widgetOptions[_selectedIndex],
@@ -68,7 +90,7 @@ class _HomepageState extends State<Homepage> {
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: NetworkImage(
-                      'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgIBwcICAgHBwcHBwoHBwcHBw8ICQcKIBEWFhUREx8YHSggGBolJx8VITEhJSkrLi4uFx8zODMsNygtLisBCgoKDQ0NDw0NDysZFRkrLSstNy0rNy0tLSs3KzcrKysrLS03LSsrLSstKzcrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAZAAEBAQEBAQAAAAAAAAAAAAABAAIDBAf/xAAWEAEBAQAAAAAAAAAAAAAAAAAAARH/xAAYAQEBAQEBAAAAAAAAAAAAAAABAAIDBP/EABYRAQEBAAAAAAAAAAAAAAAAAAARAf/aAAwDAQACEQMRAD8A+MQwRqPfjvhjbMajpjeGNMxpvG8JEabxpEFrC1CyWmsJCJJZJJLJVJQTSaQSJSRSBAQDQo3AzWa2zWNxnWKK1WWNYZrNbrNc9xnWUkyy4xqCGOWOeNwsxp1xvGoRDG8awtMlrGiQmi0giWiyoTWkCSUEiSyTUUCaigiaUElSEhqFBDOhms1qs1jWNZrNaoc9Y1lJMsuMajEajjjnjUaghjrjeNEQttYSE1hJCJJCJJZJJIRNJCRKBKRCRKSKKCNRCSSCDIFZarNZ1nRWK3Wa56xrKSYZcI1GY1HHHPGo1GI1HTGsaILeNFAkkslqkoEkoJFpBGppBEkskqkslGlBElIJFBJEIIVVmmisayzRTWaxrOpBMsvPGozDHnxyxuFmNR0zWsahZhbzWiQiWkES0giSQjUUCSUEiSEUUCajqCVNaTKKpWhJUoIUJmkUaNDNNFc9Z0IJkPPGozDHnxxxoxmNN400WYW80tJk6Wq0gjS0gSigiSWSiUEamkEaqSySSgkigiigkqUFoVQQG6FWaRWNZCCZDzwsxqPNjhhajJjeNNHWS1WmkyWqWkFpNaQRprSCNLSZJqKCRaQRRLJSKCNRQRpKCVRQWihBAJCqi1ndZ3QkGWXnajMLzY440WYY3jTRZJJIRJLJNJLJapJ1laaq0dZRNaQWqmtJnTpqpQ1GlpBKooI1FBCooJVILRo3RVWadZY3Wd1aWUzQ4GMl58cWizKWs1poslulpBEkhGklkpFBGlrUEaitCVTSZOmlrVrKNVa1aNRprWpnUqq0tZWqqtaNGjVVTo1BndZqFVZ1jdFOplCiuRZLhjkYYES0WYWs1ppAtVFBEkslEoI1NJkmkoJIllJVpBGqkspUtJlGppMpVFAaKDo1DRQghazuipDUzQ5oFxcyWS0SdZJLS0atNLSCNLSCNRQRJIRRQSRQSprSCNRQSqKC1VFaNSqOgIUVagBQWdWhndFKCZDCSYZKSJKSKRKJBSSRCJOkIopIlJJIoIopJFJJJJJJIJBDUmakEgACgyEkE//Z'),
+                      'https://media.istockphoto.com/id/1249864734/photo/beautiful-patagonia-landscape-of-andes-mountain-range-with-high-mountains-with-illuminated.jpg?s=612x612&w=0&k=20&c=i0al5xwBCdxQH2d_TIUkmZse62M-_0CDrFLwLPNW0F0='),
                   fit: BoxFit.cover)),
           child: Container(
             width: 300,
@@ -121,34 +143,7 @@ class _HomepageState extends State<Homepage> {
             // Then close the drawer
             Navigator.pop(context);
           },
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.note_add_sharp,
-            size: 25.0,
-          ),
-          title: Text('Task'),
-          selected: _selectedIndex == 1,
-          onTap: () {
-            // Update the state of the app
-            _onItemTapped(1);
-            // Then close the drawer
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.calendar_month,
-            size: 25.0,
-          ),
-          title: Text('Calendar'),
-          selected: _selectedIndex == 2,
-          onTap: () {
-            // Update the state of the app
-            _onItemTapped(2);
-            // Then close the drawer
-            Navigator.pop(context);
-          },
+          selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),
         ListTile(
           leading: Icon(
@@ -156,6 +151,36 @@ class _HomepageState extends State<Homepage> {
             size: 25.0,
           ),
           title: Text('Profile'),
+          selected: _selectedIndex == 1,
+          onTap: () {
+            // Update the state of the app
+            _onItemTapped(1);
+            // Then close the drawer
+            Navigator.pop(context);
+          },
+          selectedColor: Color.fromARGB(255, 178, 164, 255),
+        ),
+        ListTile(
+          leading: Icon(
+            Icons.note_add_sharp,
+            size: 25.0,
+          ),
+          title: Text('Task'),
+          selected: _selectedIndex == 2,
+          onTap: () {
+            // Update the state of the app
+            _onItemTapped(2);
+            // Then close the drawer
+            Navigator.pop(context);
+          },
+          selectedColor: Color.fromARGB(255, 178, 164, 255),
+        ),
+        ListTile(
+          leading: Icon(
+            Icons.calendar_month,
+            size: 25.0,
+          ),
+          title: Text('Calendar'),
           selected: _selectedIndex == 3,
           onTap: () {
             // Update the state of the app
@@ -163,21 +188,23 @@ class _HomepageState extends State<Homepage> {
             // Then close the drawer
             Navigator.pop(context);
           },
+          selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),
 
         //horizontal line
         Divider(),
         ListTile(
           leading: Icon(
-            Icons.exit_to_app_outlined,
+            Icons.logout_rounded,
             size: 25.0,
           ),
-          title: const Text('Exit'),
+          title: const Text('Logout'),
           onTap: () {
             setState(() {
               Navigator.pop(context);
             });
           },
+          selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),
       ],
     );
