@@ -26,8 +26,8 @@ class _HomepageState extends State<Homepage> {
     ShowTask(),
     profile(),
     Task(),
-    // LogoutPage(),
     calendar(),
+    LogoutPage(),
   ];
 
   int _selectedIndex = 0;
@@ -200,9 +200,8 @@ class _HomepageState extends State<Homepage> {
           ),
           title: const Text('Logout'),
           onTap: () {
-            setState(() {
-              Navigator.pop(context);
-            });
+            _onItemTapped(4);
+            Navigator.pop(context);
           },
           selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),

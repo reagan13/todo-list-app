@@ -37,6 +37,7 @@ class _TaskState extends State<Task> {
   bool isChecked = false;
   bool showCheckbox = false;
 
+  int taskCount = 0;
   bool standardSelected = false;
   Set<int> selectedIndex = Set<int>();
 
@@ -264,6 +265,55 @@ class _TaskState extends State<Task> {
     );
   }
 
+// Define a method to display the pending tasks section
+  Widget buildPendingTasksSection(int taskCount) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 30, bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.task_rounded,
+                color: Color.fromARGB(255, 178, 164, 255),
+              ),
+              SizedBox(width: 3),
+              Text(
+                'Pending Tasks',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          // Number of tasks
+          Container(
+            height: 28,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 178, 164, 255),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Text(
+                  taskCount.toString(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //checkbox visibility true
@@ -323,67 +373,34 @@ class _TaskState extends State<Task> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasData) {
+            } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
               List taskList = snapshot.data!.docs;
+
+              int importantTaskCount = 0;
+              int normalTaskCount = 0;
+              int leastTaskCount = 0;
+
+              // Filter tasks based on category
+              List importantTasks = taskList
+                  .where((task) => task['category'] == 'Important')
+                  .toList();
+              List normalTask = taskList
+                  .where((task) => task['category'] == 'Normal')
+                  .toList();
+              List leastTask = taskList
+                  .where((task) => task['category'] == 'Least')
+                  .toList();
+
+              importantTaskCount = importantTasks.length;
+              normalTaskCount = normalTask.length;
+              leastTaskCount = leastTask.length;
 
               return TabBarView(
                 children: <Widget>[
                   // Priority Tab
-
                   Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.task_rounded,
-                                  color: getCategoryColor(
-                                    'Important',
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  'Pending Tasks',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            //number of tasks
-                            Container(
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: getCategoryColor(
-                                  'Important',
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                  child: Text(
-                                    '12',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      buildPendingTasksSection(taskCount = importantTaskCount),
                       Expanded(
                         child: ListView.builder(
                           itemCount: taskList.length,
@@ -398,6 +415,8 @@ class _TaskState extends State<Task> {
                             Map<String, dynamic> data =
                                 document.data() as Map<String, dynamic>;
                             if (data['category'] == 'Important') {
+                              // Increment the important task count
+                              taskCount++;
                               String taskText = data['title'];
                               String taskContent = data['description'];
                               String taskCategory = data['category'];
@@ -406,7 +425,7 @@ class _TaskState extends State<Task> {
                               String taskDate = data['date'];
                               String taskTimeStamp =
                                   data['timestamp'].toString();
-
+                              taskCount = snapshot.data!.size;
                               // display as list tile
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -683,58 +702,7 @@ class _TaskState extends State<Task> {
                   // Normal Tab
                   Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.task_rounded,
-                                  color: getCategoryColor(
-                                    'Normal',
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  'Pending Tasks',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            //number of tasks
-                            Container(
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: getCategoryColor(
-                                  'Normal',
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                  child: Text(
-                                    '12',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      buildPendingTasksSection(taskCount = normalTaskCount),
                       Expanded(
                         child: ListView.builder(
                           itemCount: taskList.length,
@@ -1034,59 +1002,7 @@ class _TaskState extends State<Task> {
                   // Least Priority Tab
                   Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.task_rounded,
-                                  color: getCategoryColor(
-                                    'Least',
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  'Pending Tasks',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            //number of tasks
-                            Container(
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: getCategoryColor(
-                                  'Least',
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                  child: Text(
-                                    '12',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      buildPendingTasksSection(taskCount = leastTaskCount),
                       Expanded(
                         child: ListView.builder(
                           itemCount: taskList.length,
@@ -1386,24 +1302,10 @@ class _TaskState extends State<Task> {
                 ],
               );
             } else {
-              return Center(child: CircularProgressIndicator());
+              return NoTask();
             }
           },
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add your FloatingActionButton onPressed code here!
-            // For example, you can navigate to another page.
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const AddTask()));
-          },
-          backgroundColor: Color.fromARGB(255, 178, 164, 255),
-          shape: CircleBorder(),
-          foregroundColor: Colors.white,
-          child: Icon(Icons.add),
-        ),
-        backgroundColor: const Color.fromARGB(255, 241, 234, 255),
       ),
     );
   }

@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +47,7 @@ class FirestoreService {
   }
 
   // Read
-  Future readTasks(Dt) async {
+  Future readTasks() async {
     firestoreService
         .collection("users")
         .doc(user.uid)
@@ -77,6 +75,16 @@ class FirestoreService {
         .collection("tasks")
         .where("complete", isNotEqualTo: "complete")
         .snapshots();
+  }
+
+  // Update fname and lname
+
+  Future updateName(String fname, String lname) async {
+    await firestoreService.collection('users').doc(user.uid).update({
+      "First Name": fname,
+      "Last Name": lname,
+      "timestamp": Timestamp.now(),
+    });
   }
 
   // update task

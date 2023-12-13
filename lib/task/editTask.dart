@@ -44,8 +44,7 @@ class _EditTaskState extends State<EditTask> {
   DateTime _selectedDate = DateTime.now();
   String _dueTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String? _category;
-  String chosenCategory = "Important";
-
+  String chosenCategory = "";
   @override
   void initState() {
     super.initState();
@@ -401,14 +400,8 @@ class _EditTaskState extends State<EditTask> {
                                                 _taskContent.text.trim(),
                                                 _selectedDate.toString(),
                                                 _dueTime,
-                                                chosenCategory,
+                                                chosenCategory.toString(),
                                                 widget.TaskDocId);
-
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const Homepage()));
 
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
@@ -419,6 +412,12 @@ class _EditTaskState extends State<EditTask> {
                                                     const Duration(seconds: 3),
                                               ),
                                             );
+
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const Homepage()));
                                           },
                                           child: Text(
                                             'Confirm',

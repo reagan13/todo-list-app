@@ -15,8 +15,8 @@ class NoTask extends StatelessWidget {
           ClipRRect(
             child: Align(
               alignment: Alignment.center,
-              child: Image.asset(
-                '..//lib/images/take-note.jpg',
+              child: Image.network(
+                'https://static.vecteezy.com/system/resources/previews/011/360/558/original/pencil-and-notes-cartoon-icon-illustration-education-object-icon-concept-isolated-premium-flat-cartoon-style-vector.jpg',
                 height: 400,
                 width: 400,
               ),
@@ -58,17 +58,6 @@ class NoTask extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your FloatingActionButton onPressed code here!
-          // For example, you can navigate to another page.
-        },
-        backgroundColor: Color.fromARGB(255, 91, 89, 247),
-        shape: CircleBorder(),
-        foregroundColor: Colors.white,
-        child: Icon(Icons.add),
       ),
     );
   }

@@ -487,7 +487,7 @@ class _AddTaskState extends State<AddTask> {
         _selectedDate = _pickDate;
       });
     } else {
-      return 'Enter Due Date';
+      return Text('Enter Due Date');
     }
   }
 
@@ -512,5 +512,17 @@ class _AddTaskState extends State<AddTask> {
         initialTime: TimeOfDay(
             hour: int.parse(_dueTime.split(":")[0]),
             minute: int.parse(_dueTime.split(":")[1].split(" ")[0])));
+  }
+
+  // check controllers value
+  bool checkController() {
+    if (_taskTitle.text.trim() == "" && chosenCategory == "") {
+      return false;
+    } else if (chosenCategory == "") {
+      chosenCategory == "Normal";
+      return true;
+    } else {
+      return true;
+    }
   }
 }
