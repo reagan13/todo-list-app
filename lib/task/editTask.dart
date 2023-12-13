@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list_application/authentication/authenticator.dart';
 import 'package:todo_list_application/main.dart';
 import 'package:todo_list_application/screen/homepage.dart';
 import 'package:todo_list_application/services/firestoreService.dart';
@@ -383,7 +384,7 @@ class _EditTaskState extends State<EditTask> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const ShowTask()));
+                                                        const Authenticator()));
                                           },
                                           child: Text(
                                             'Cancel',
@@ -417,7 +418,7 @@ class _EditTaskState extends State<EditTask> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const ShowTask()));
+                                                        const Homepage()));
                                           },
                                           child: Text(
                                             'Confirm',
