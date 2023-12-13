@@ -73,18 +73,55 @@ class FirestoreService {
         .collection("users")
         .doc(user.uid)
         .collection("tasks")
-        .where("complete", isNotEqualTo: "complete")
+        .where("complete", isEqualTo: "not complete")
+        .snapshots();
+  }
+
+  // display task
+  Stream<QuerySnapshot> stream1() {
+    return firestoreService
+        .collection("archive")
+        .doc(user.uid)
+        .collection("completed task")
+        .orderBy("timestamp")
         .snapshots();
   }
 
   // Update fname and lname
-
   Future updateName(String fname, String lname) async {
     await firestoreService.collection('users').doc(user.uid).update({
       "First Name": fname,
       "Last Name": lname,
       "timestamp": Timestamp.now(),
     });
+  }
+
+  // GetName
+  Future<List<String>> getName() async {
+    List<String> names = [];
+
+    try {
+      var querySnapshot = await firestoreService.collection("users").get();
+      print("Successfully completed");
+
+      for (var docSnapshot in querySnapshot.docs) {
+        var data = docSnapshot.data() as Map<String, dynamic>;
+
+        // Assuming 'firstName' and 'lastName' are the field names in Firestore
+        var firstName = data['firstName'];
+        var lastName = data['lastName'];
+
+        var fullName = '$firstName $lastName';
+        names.add(fullName);
+
+        print('${docSnapshot.id} => $fullName');
+      }
+
+      return names;
+    } catch (e) {
+      print("Error completing: $e");
+      return []; // or throw an exception, depending on your requirements
+    }
   }
 
   // update task
@@ -97,7 +134,7 @@ class FirestoreService {
         .doc(docId)
         .update({
       // Your update fields here
-      "user id": user.uid,
+
       "task id": docId,
       "title": title,
       "description": content,
@@ -105,7 +142,7 @@ class FirestoreService {
       "time": time,
       "category": category,
     });
-    archiveDeletedTask(title, content, date, time, category, docId);
+    archiveUpdateTask(title, content, date, time, category, docId);
   }
 
   // archive update task

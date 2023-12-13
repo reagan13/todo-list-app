@@ -33,6 +33,6 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           textTheme: GoogleFonts.latoTextTheme(),
         ),
-        home: const Authenticator());
+        home: const Onboarding());
   }
 }

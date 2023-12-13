@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:todo_list_application/authentication/authenticator.dart';
 
 class Page3 extends StatelessWidget {
   const Page3({super.key});
@@ -66,6 +67,10 @@ class Page3 extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => {
                   //handle button press
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return const Authenticator();
+                  }))
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Color.fromARGB(

@@ -44,7 +44,7 @@ class _EditTaskState extends State<EditTask> {
   DateTime _selectedDate = DateTime.now();
   String _dueTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String? _category;
-  String chosenCategory = "";
+  String chosenCategory = "Normal";
   @override
   void initState() {
     super.initState();
@@ -417,7 +417,7 @@ class _EditTaskState extends State<EditTask> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const Homepage()));
+                                                        const ShowTask()));
                                           },
                                           child: Text(
                                             'Confirm',

@@ -24,7 +24,6 @@ class _OnboardingState extends State<Onboarding> {
     const Page1(),
     const Page2(),
     const Page3(),
-    Authenticator()
   ];
   @override
   Widget build(BuildContext context) {

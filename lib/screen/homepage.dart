@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/authentication/logout.dart';
+import 'package:todo_list_application/screen/completed.dart';
 import 'package:todo_list_application/screen/profile.dart';
 import 'package:todo_list_application/task/addtask.dart';
 import 'package:todo_list_application/screen/calendar.dart';
@@ -26,6 +27,7 @@ class _HomepageState extends State<Homepage> {
     ShowTask(),
     profile(),
     Task(),
+    Completed(),
     calendar(),
     LogoutPage(),
   ];
@@ -177,14 +179,29 @@ class _HomepageState extends State<Homepage> {
         ),
         ListTile(
           leading: Icon(
-            Icons.calendar_month,
+            Icons.note_add_sharp,
             size: 25.0,
           ),
-          title: Text('Calendar'),
+          title: Text('Complete Task'),
           selected: _selectedIndex == 3,
           onTap: () {
             // Update the state of the app
             _onItemTapped(3);
+            // Then close the drawer
+            Navigator.pop(context);
+          },
+          selectedColor: Color.fromARGB(255, 178, 164, 255),
+        ),
+        ListTile(
+          leading: Icon(
+            Icons.calendar_month,
+            size: 25.0,
+          ),
+          title: Text('Calendar'),
+          selected: _selectedIndex == 4,
+          onTap: () {
+            // Update the state of the app
+            _onItemTapped(4);
             // Then close the drawer
             Navigator.pop(context);
           },
@@ -199,8 +216,9 @@ class _HomepageState extends State<Homepage> {
             size: 25.0,
           ),
           title: const Text('Logout'),
+          selected: _selectedIndex == 5,
           onTap: () {
-            _onItemTapped(4);
+            _onItemTapped(5);
             Navigator.pop(context);
           },
           selectedColor: Color.fromARGB(255, 178, 164, 255),

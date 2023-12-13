@@ -74,7 +74,6 @@ class _LoginState extends State<Login> {
 
           // second container
           Container(
-            height: 500,
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -100,6 +99,7 @@ class _LoginState extends State<Login> {
                         fontWeight: FontWeight.w600,
                         color: Color.fromARGB(255, 69, 69, 69)),
                   ),
+                  SizedBox(height: 15),
                   const Text(
                     'Fill out the information below in order to access your account',
                     textAlign: TextAlign.center,
@@ -108,7 +108,7 @@ class _LoginState extends State<Login> {
                         fontWeight: FontWeight.w500,
                         color: Color.fromARGB(255, 69, 69, 69)),
                   ),
-
+                  SizedBox(height: 15),
                   // Email
                   Container(
                     child: TextFormField(
@@ -139,7 +139,7 @@ class _LoginState extends State<Login> {
                       keyboardType: TextInputType.emailAddress,
                     ),
                   ),
-
+                  SizedBox(height: 15),
                   // Password
                   Container(
                     child: TextFormField(
@@ -179,7 +179,7 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   ),
-
+                  SizedBox(height: 15),
                   // Sign In Button
                   SizedBox(
                     height: 40,
@@ -202,7 +202,7 @@ class _LoginState extends State<Login> {
                   ),
 
                   const Text(
-                    'Or Sign in with',
+                    'Or ',
                     style: TextStyle(
                       color: Color.fromARGB(255, 87, 99, 108),
                     ),
@@ -274,7 +274,7 @@ class _LoginState extends State<Login> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
-      Navigator.pop(context);
+
       showErrorMessage('Successfully Log In');
     } on FirebaseAuthException catch (e) {
       String errorMessage = e.code.toString();

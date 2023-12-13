@@ -29,7 +29,7 @@ class _AddTaskState extends State<AddTask> {
 
   String _dueTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String? _category = 'Important';
-  String chosenCategory = "";
+  String chosenCategory = "Normal";
 
   @override
   Widget build(BuildContext context) {
