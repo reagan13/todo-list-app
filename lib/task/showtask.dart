@@ -374,8 +374,9 @@ class _ShowTaskState extends State<ShowTask> {
                               String taskTime = data['time'];
                               String taskDate = data['date'];
 
-                              String taskTimeStamp =
-                                  data['timestamp'].toString();
+                              Timestamp taskTimeStamp = data['timestamp'];
+                              DateTime taskDateTime = taskTimeStamp.toDate();
+                              print(taskDateTime);
 
                               // display as list tile
                               return Column(
@@ -404,7 +405,8 @@ class _ShowTaskState extends State<ShowTask> {
                                                 taskCategory: taskCategory,
                                                 taskTime: taskTime,
                                                 taskDate: taskDate,
-                                                taskTimeStamp: taskTimeStamp,
+                                                taskTimeStamp:
+                                                    taskDateTime.toString(),
                                                 docId: docId);
                                           },
                                         );
@@ -551,7 +553,7 @@ class _ShowTaskState extends State<ShowTask> {
                                                                                           // Dismiss the dialog
                                                                                           Navigator.of(context).pop();
 
-                                                                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ShowTask()));
+                                                                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homepage()));
                                                                                         },
                                                                                         child: Text(
                                                                                           'Cancel',

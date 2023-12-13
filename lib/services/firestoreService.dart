@@ -37,7 +37,7 @@ class FirestoreService {
         "time": time,
         "complete": "not complete",
         "category": category,
-        "timestamp": Timestamp.now(),
+        "timestamp": Timestamp.now().toDate(),
       });
 
       return true;

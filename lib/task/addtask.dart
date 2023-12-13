@@ -436,6 +436,11 @@ class _AddTaskState extends State<AddTask> {
                                 onPressed: () {
                                   // Handle button press
                                   Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Homepage()));
                                 },
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors
