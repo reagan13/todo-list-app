@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_application/authentication/logout.dart';
 import 'package:todo_list_application/screen/completed.dart';
 import 'package:todo_list_application/screen/profile.dart';
+import 'package:todo_list_application/services/firestoreService.dart';
 import 'package:todo_list_application/task/addtask.dart';
 import 'package:todo_list_application/screen/calendar.dart';
 import 'package:todo_list_application/screen/task.dart';
@@ -23,6 +24,11 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  String fname = "";
+  String lname = "";
+
+  String firstName = "";
+  String lastName = "";
   final user = FirebaseAuth.instance.currentUser!;
   static const List<Widget> _widgetOptions = <Widget>[
     ShowTask(),
@@ -36,6 +42,22 @@ class _HomepageState extends State<Homepage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the readTasks method when the widget is initialized
+    readTasks().then((_) {
+      setState(() {
+        // Update the state variable
+        firstName = fname;
+        lastName = lname;
+      });
+      print(fname);
+      print("It works now");
+      print('$firstName yes');
     });
   }
 
@@ -57,7 +79,7 @@ class _HomepageState extends State<Homepage> {
               child: badges.Badge(
                 badgeContent: Text(
                   //THE COUNT
-                  '3',
+                  '0',
                   style: TextStyle(color: Colors.white),
                 ),
                 child: Icon(Icons.notifications),
@@ -106,14 +128,14 @@ class _HomepageState extends State<Homepage> {
                   height: 80,
                 )),
                 Text(
-                  'Kim Leones',
+                  '$firstName $lastName',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  'kimleones@gmail.com',
+                  user.email!,
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -209,6 +231,28 @@ class _HomepageState extends State<Homepage> {
           selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),
       ],
+    );
+  }
+
+  // Read
+  Future<void> readTasks() async {
+    await FirestoreService()
+        .firestoreService
+        .collection("users")
+        .where("email", isEqualTo: user.email!)
+        .get()
+        .then(
+      (querySnapshot) {
+        print("Successfully completed");
+
+        for (var docSnapshot in querySnapshot.docs) {
+          // Retrieve the name from the document data
+          fname = docSnapshot.data()['First Name'];
+          lname = docSnapshot.data()['Last Name'];
+        }
+        print(fname);
+      },
+      onError: (e) => print("Error completing: $e"),
     );
   }
 }

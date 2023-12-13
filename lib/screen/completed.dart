@@ -590,21 +590,6 @@ class _CompletedState extends State<Completed> {
           ),
         ],
       ),
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your FloatingActionButton onPressed code here!
-          // For example, you can navigate to another page.
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddTask()));
-        },
-        backgroundColor: Color.fromARGB(255, 178, 164, 255),
-        shape: CircleBorder(),
-        foregroundColor: Colors.white,
-        child: Icon(Icons.add),
-      ),
-      backgroundColor: const Color.fromARGB(255, 241, 234, 255),
     );
   }
 }

@@ -29,16 +29,21 @@ class _profileState extends State<profile> {
   String lname = "";
 
   String firstName = "";
+  String lastName = "";
 
   @override
   void initState() {
     super.initState();
     // Call the readTasks method when the widget is initialized
     readTasks().then((_) {
-      firstName = fname;
+      setState(() {
+        // Update the state variable
+        firstName = fname;
+        lastName = lname;
+      });
       print(fname);
       print("It works now");
-      print(firstName);
+      print('$firstName yes');
     });
   }
 
@@ -221,7 +226,7 @@ class _profileState extends State<profile> {
                       right: 20,
                     ),
                     child: Text(
-                      'First Name $firstName $fname',
+                      'First Name',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -233,7 +238,8 @@ class _profileState extends State<profile> {
                     padding:
                         const EdgeInsets.only(left: 20, right: 20, top: 10),
                     child: TextFormField(
-                      controller: _fnameController,
+                      readOnly: true,
+                      //   controller: _fnameController,
                       // focusNode: _emailFocusNode,
 
                       autofocus: true,
@@ -245,12 +251,6 @@ class _profileState extends State<profile> {
 
                         filled: true,
                         fillColor: const Color.fromARGB(255, 241, 244, 248),
-
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _fnameController.clear();
-                            },
-                            icon: const Icon(Icons.clear)),
                       ),
                     ),
                   ),
@@ -275,6 +275,7 @@ class _profileState extends State<profile> {
                     padding:
                         const EdgeInsets.only(left: 20, right: 20, top: 10),
                     child: TextFormField(
+                      readOnly: true,
                       controller: _lnameController,
                       // focusNode: _emailFocusNode,
 
@@ -282,17 +283,11 @@ class _profileState extends State<profile> {
                       obscureText: false,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: fname,
+                        labelText: lastName,
                         // decoration box
 
                         filled: true,
                         fillColor: const Color.fromARGB(255, 241, 244, 248),
-
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _lnameController.clear();
-                            },
-                            icon: const Icon(Icons.clear)),
                       ),
                     ),
                   ),
@@ -317,24 +312,19 @@ class _profileState extends State<profile> {
                     padding:
                         const EdgeInsets.only(left: 20, right: 20, top: 10),
                     child: TextFormField(
-                      controller: _lnameController,
+                      readOnly: true,
+                      controller: _emailController,
                       // focusNode: _emailFocusNode,
 
                       autofocus: true,
                       obscureText: false,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: fname,
+                        labelText: user.email,
                         // decoration box
 
                         filled: true,
                         fillColor: const Color.fromARGB(255, 241, 244, 248),
-
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _fnameController.clear();
-                            },
-                            icon: const Icon(Icons.clear)),
                       ),
                     ),
                   ),
