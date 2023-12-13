@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import, prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_field, sort_child_properties_last, no_leading_underscores_for_local_identifiers
 
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -281,13 +283,27 @@ class _TaskState extends State<Task> {
       });
     }
 
+// Define a function to get the color based on the category
+    Color getCategoryColor(String category) {
+      switch (category.toLowerCase()) {
+        case 'important':
+          return Color.fromARGB(255, 179, 19, 18);
+        case 'normal':
+          return Color.fromARGB(255, 178, 164, 255);
+        case 'least':
+          return Color.fromARGB(255, 92, 84, 112);
+        default:
+          return Color.fromARGB(0, 194, 45, 132);
+      }
+    }
+
     return DefaultTabController(
       initialIndex: 1,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 10,
-          backgroundColor: const Color.fromARGB(255, 241, 244, 248),
+          backgroundColor: const Color.fromARGB(255, 241, 234, 255),
+          toolbarHeight: 5,
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
@@ -313,38 +329,87 @@ class _TaskState extends State<Task> {
               return TabBarView(
                 children: <Widget>[
                   // Priority Tab
-                  ListView.builder(
-                    itemCount: taskList.length,
-                    itemBuilder: (context, index) {
-                      // Your Priority Tab logic here
-                      var docId = snapshot.data!.docs[index].id;
-                      // get each indivudal doc
-                      DocumentSnapshot document = taskList[index];
-                      // String docId = document.id;
 
-                      // get task from each doc
-                      Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
-                      if (data['category'] == 'Important') {
-                        String taskText = data['title'];
-                        String taskContent = data['description'];
-                        String taskCategory = data['category'];
-                        String taskTime = data['time'];
-
-                        String taskDate = data['date'];
-                        String taskTimeStamp = data['timestamp'].toString();
-
-                        // display as list tile
-                        return Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.task_rounded,
+                                  color: getCategoryColor(
+                                    'Important',
+                                  ),
                                 ),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Text(
+                                  'Pending Tasks',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            //number of tasks
+                            Container(
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: getCategoryColor(
+                                  'Important',
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                  child: Text(
+                                    '12',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: taskList.length,
+                          itemBuilder: (context, index) {
+                            // Your Priority Tab logic here
+                            var docId = snapshot.data!.docs[index].id;
+                            // get each indivudal doc
+                            DocumentSnapshot document = taskList[index];
+                            // String docId = document.id;
+
+                            // get task from each doc
+                            Map<String, dynamic> data =
+                                document.data() as Map<String, dynamic>;
+                            if (data['category'] == 'Important') {
+                              String taskText = data['title'];
+                              String taskContent = data['description'];
+                              String taskCategory = data['category'];
+                              String taskTime = data['time'];
+
+                              String taskDate = data['date'];
+                              String taskTimeStamp =
+                                  data['timestamp'].toString();
+
+                              // display as list tile
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
                                   //showCheckBox
                                   onLongPress: () {
@@ -354,207 +419,348 @@ class _TaskState extends State<Task> {
                                   onDoubleTap: () {
                                     _handleDoubleTap();
                                   },
-                                  child: ListTile(
-                                    title: Text(taskText),
-                                    subtitle: Text(
-                                      taskContent,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    leading: showCheckbox
-                                        ? Checkbox(
-                                            value:
-                                                selectedIndex.contains(index),
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                if (value != null && value) {
-                                                  selectedIndex.add(index);
-                                                } else {
-                                                  selectedIndex.remove(index);
-                                                }
-                                              });
-                                            },
-                                            activeColor: Color.fromARGB(
-                                                255, 91, 89, 247),
-                                          )
-                                        : null,
-                                    //mark as completed
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 25),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(taskCategory,
-                                                  style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 14)),
-                                            ],
-                                          ),
-                                        ),
-                                        IconButton(
-                                          isSelected: standardSelected,
-                                          onPressed: () {
-                                            //handle completed task
-                                            setState(() {
-                                              standardSelected =
-                                                  !standardSelected;
-                                            });
-
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title:
-                                                      Text('Mark as Complete'),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        // Dismiss the dialog
-                                                        Navigator.of(context)
-                                                            .pop();
-
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const ShowTask()));
-                                                      },
-                                                      child: Text(
-                                                        'Cancel',
-                                                        style: TextStyle(
-                                                          color: const Color
-                                                              .fromARGB(255,
-                                                              128, 127, 127),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        FirestoreService()
-                                                            .markComplete(
-                                                                taskText,
-                                                                taskContent,
-                                                                taskDate,
-                                                                taskTime,
-                                                                taskCategory,
-                                                                docId);
-
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const Homepage()));
-
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                "Task Mark Completed"),
-                                                            duration:
-                                                                const Duration(
-                                                                    seconds: 3),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Text(
-                                                        'Confirm',
-                                                        style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255, 91, 89, 247),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          selectedIcon: const Icon(
-                                            Icons.flag,
-                                            color: Colors.greenAccent,
-                                          ),
-                                          icon: Icon(
-                                            Icons.flag_outlined,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
+                                  //Modal Content
+                                  onTap: () {
                                     //Modal Content
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          return taskWidget(
-                                              taskText: taskText,
-                                              taskContent: taskContent,
-                                              taskCategory: taskCategory,
-                                              taskTime: taskTime,
-                                              taskDate: taskDate,
-                                              taskTimeStamp: taskTimeStamp,
-                                              docId: docId);
-                                        },
-                                      );
-                                    },
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return taskWidget(
+                                            taskText: taskText,
+                                            taskContent: taskContent,
+                                            taskCategory: taskCategory,
+                                            taskTime: taskTime,
+                                            taskDate: taskDate,
+                                            taskTimeStamp: taskTimeStamp,
+                                            docId: docId);
+                                      },
+                                    );
+                                  },
+                                  //LIST BOX CONTENT
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(1),
+                                              spreadRadius: 1,
+                                              blurRadius: 3,
+                                              offset: Offset(0,
+                                                  3), // changes the position of the shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 5, sigmaY: 5),
+                                            child: Container(
+                                              color:
+                                                  Colors.white.withOpacity(1),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Wrap(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          child: showCheckbox
+                                                              ? Checkbox(
+                                                                  value: selectedIndex
+                                                                      .contains(
+                                                                          index),
+                                                                  onChanged:
+                                                                      (bool?
+                                                                          value) {
+                                                                    setState(
+                                                                        () {
+                                                                      if (value !=
+                                                                              null &&
+                                                                          value) {
+                                                                        selectedIndex
+                                                                            .add(index);
+                                                                      } else {
+                                                                        selectedIndex
+                                                                            .remove(index);
+                                                                      }
+                                                                    });
+                                                                  },
+                                                                  activeColor: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          91,
+                                                                          89,
+                                                                          247),
+                                                                )
+                                                              : null,
+                                                        ),
+                                                        Expanded(
+                                                            child: ClipRRect(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    taskText,
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 13,
+                                                                  ),
+                                                                  Text(
+                                                                    taskDate,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Column(
+                                                                      children: [
+                                                                        IconButton(
+                                                                          isSelected:
+                                                                              standardSelected,
+                                                                          onPressed:
+                                                                              () {
+                                                                            //handle completed task
+                                                                            setState(() {
+                                                                              standardSelected = !standardSelected;
+                                                                            });
+
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return AlertDialog(
+                                                                                  title: Text('Mark as Complete'),
+                                                                                  actions: <Widget>[
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        // Dismiss the dialog
+                                                                                        Navigator.of(context).pop();
+
+                                                                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ShowTask()));
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        'Cancel',
+                                                                                        style: TextStyle(
+                                                                                          color: const Color.fromARGB(255, 128, 127, 127),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        FirestoreService().markComplete(taskText, taskContent, taskDate, taskTime, taskCategory, docId);
+
+                                                                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homepage()));
+
+                                                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                                                          SnackBar(
+                                                                                            content: Text("Task Mark Completed"),
+                                                                                            duration: const Duration(seconds: 3),
+                                                                                          ),
+                                                                                        );
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        'Confirm',
+                                                                                        style: TextStyle(
+                                                                                          color: Color.fromARGB(255, 91, 89, 247),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          selectedIcon:
+                                                                              const Icon(
+                                                                            Icons.flag,
+                                                                            color:
+                                                                                Colors.greenAccent,
+                                                                          ),
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.flag_outlined,
+                                                                            color:
+                                                                                Colors.green,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          height:
+                                                                              28,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                getCategoryColor(taskCategory),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                                                              child: Text(
+                                                                                taskCategory,
+                                                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ))
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        // Placeholder or loading indicator when snapshot has no data
-                        return Container();
-                      }
-                    },
+                              );
+                            } else {
+                              // Placeholder or loading indicator when snapshot has no data
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   // Normal Tab
-                  ListView.builder(
-                    itemCount: taskList.length,
-                    itemBuilder: (context, index) {
-                      // Your Priority Tab logic here
-                      var docId = snapshot.data!.docs[index].id;
-                      // get each indivudal doc
-                      DocumentSnapshot document = taskList[index];
-                      // String docId = document.id;
-
-                      // get task from each doc
-                      Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
-                      if (data['category'] == 'Normal') {
-                        String taskText = data['title'];
-                        String taskContent = data['description'];
-                        String taskCategory = data['category'];
-                        String taskTime = data['time'];
-
-                        String taskDate = data['date'];
-                        String taskTimeStamp = data['timestamp'].toString();
-
-                        // display as list tile
-                        return Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.task_rounded,
+                                  color: getCategoryColor(
+                                    'Normal',
+                                  ),
                                 ),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Text(
+                                  'Pending Tasks',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            //number of tasks
+                            Container(
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: getCategoryColor(
+                                  'Normal',
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                  child: Text(
+                                    '12',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: taskList.length,
+                          itemBuilder: (context, index) {
+                            // Your Priority Tab logic here
+                            var docId = snapshot.data!.docs[index].id;
+                            // get each indivudal doc
+                            DocumentSnapshot document = taskList[index];
+                            // String docId = document.id;
+
+                            // get task from each doc
+                            Map<String, dynamic> data =
+                                document.data() as Map<String, dynamic>;
+                            if (data['category'] == 'Normal') {
+                              String taskText = data['title'];
+                              String taskContent = data['description'];
+                              String taskCategory = data['category'];
+                              String taskTime = data['time'];
+
+                              String taskDate = data['date'];
+                              String taskTimeStamp =
+                                  data['timestamp'].toString();
+
+                              // display as list tile
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
                                   //showCheckBox
                                   onLongPress: () {
@@ -564,207 +770,349 @@ class _TaskState extends State<Task> {
                                   onDoubleTap: () {
                                     _handleDoubleTap();
                                   },
-                                  child: ListTile(
-                                    title: Text(taskText),
-                                    subtitle: Text(
-                                      taskContent,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    leading: showCheckbox
-                                        ? Checkbox(
-                                            value:
-                                                selectedIndex.contains(index),
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                if (value != null && value) {
-                                                  selectedIndex.add(index);
-                                                } else {
-                                                  selectedIndex.remove(index);
-                                                }
-                                              });
-                                            },
-                                            activeColor: Color.fromARGB(
-                                                255, 91, 89, 247),
-                                          )
-                                        : null,
-                                    //mark as completed
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 25),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(taskCategory,
-                                                  style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 14)),
-                                            ],
-                                          ),
-                                        ),
-                                        IconButton(
-                                          isSelected: standardSelected,
-                                          onPressed: () {
-                                            //handle completed task
-                                            setState(() {
-                                              standardSelected =
-                                                  !standardSelected;
-                                            });
-
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title:
-                                                      Text('Mark as Complete'),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        // Dismiss the dialog
-                                                        Navigator.of(context)
-                                                            .pop();
-
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const ShowTask()));
-                                                      },
-                                                      child: Text(
-                                                        'Cancel',
-                                                        style: TextStyle(
-                                                          color: const Color
-                                                              .fromARGB(255,
-                                                              128, 127, 127),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        FirestoreService()
-                                                            .markComplete(
-                                                                taskText,
-                                                                taskContent,
-                                                                taskDate,
-                                                                taskTime,
-                                                                taskCategory,
-                                                                docId);
-
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const Homepage()));
-
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                "Task Mark Completed"),
-                                                            duration:
-                                                                const Duration(
-                                                                    seconds: 3),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Text(
-                                                        'Confirm',
-                                                        style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255, 91, 89, 247),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          selectedIcon: const Icon(
-                                            Icons.flag,
-                                            color: Colors.greenAccent,
-                                          ),
-                                          icon: Icon(
-                                            Icons.flag_outlined,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
+                                  //Modal Content
+                                  onTap: () {
                                     //Modal Content
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          return taskWidget(
-                                              taskText: taskText,
-                                              taskContent: taskContent,
-                                              taskCategory: taskCategory,
-                                              taskTime: taskTime,
-                                              taskDate: taskDate,
-                                              taskTimeStamp: taskTimeStamp,
-                                              docId: docId);
-                                        },
-                                      );
-                                    },
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return taskWidget(
+                                            taskText: taskText,
+                                            taskContent: taskContent,
+                                            taskCategory: taskCategory,
+                                            taskTime: taskTime,
+                                            taskDate: taskDate,
+                                            taskTimeStamp: taskTimeStamp,
+                                            docId: docId);
+                                      },
+                                    );
+                                  },
+                                  //LIST BOX CONTENT
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(1),
+                                              spreadRadius: 1,
+                                              blurRadius: 3,
+                                              offset: Offset(0,
+                                                  3), // changes the position of the shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 5, sigmaY: 5),
+                                            child: Container(
+                                              color:
+                                                  Colors.white.withOpacity(1),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Wrap(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          child: showCheckbox
+                                                              ? Checkbox(
+                                                                  value: selectedIndex
+                                                                      .contains(
+                                                                          index),
+                                                                  onChanged:
+                                                                      (bool?
+                                                                          value) {
+                                                                    setState(
+                                                                        () {
+                                                                      if (value !=
+                                                                              null &&
+                                                                          value) {
+                                                                        selectedIndex
+                                                                            .add(index);
+                                                                      } else {
+                                                                        selectedIndex
+                                                                            .remove(index);
+                                                                      }
+                                                                    });
+                                                                  },
+                                                                  activeColor: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          91,
+                                                                          89,
+                                                                          247),
+                                                                )
+                                                              : null,
+                                                        ),
+                                                        Expanded(
+                                                            child: ClipRRect(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    taskText,
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 13,
+                                                                  ),
+                                                                  Text(
+                                                                    taskDate,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Column(
+                                                                      children: [
+                                                                        IconButton(
+                                                                          isSelected:
+                                                                              standardSelected,
+                                                                          onPressed:
+                                                                              () {
+                                                                            //handle completed task
+                                                                            setState(() {
+                                                                              standardSelected = !standardSelected;
+                                                                            });
+
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return AlertDialog(
+                                                                                  title: Text('Mark as Complete'),
+                                                                                  actions: <Widget>[
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        // Dismiss the dialog
+                                                                                        Navigator.of(context).pop();
+
+                                                                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ShowTask()));
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        'Cancel',
+                                                                                        style: TextStyle(
+                                                                                          color: const Color.fromARGB(255, 128, 127, 127),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        FirestoreService().markComplete(taskText, taskContent, taskDate, taskTime, taskCategory, docId);
+
+                                                                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homepage()));
+
+                                                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                                                          SnackBar(
+                                                                                            content: Text("Task Mark Completed"),
+                                                                                            duration: const Duration(seconds: 3),
+                                                                                          ),
+                                                                                        );
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        'Confirm',
+                                                                                        style: TextStyle(
+                                                                                          color: Color.fromARGB(255, 91, 89, 247),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          selectedIcon:
+                                                                              const Icon(
+                                                                            Icons.flag,
+                                                                            color:
+                                                                                Colors.greenAccent,
+                                                                          ),
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.flag_outlined,
+                                                                            color:
+                                                                                Colors.green,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          height:
+                                                                              28,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                getCategoryColor(taskCategory),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                                                              child: Text(
+                                                                                taskCategory,
+                                                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ))
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        // Placeholder or loading indicator when snapshot has no data
-                        return Container();
-                      }
-                    },
+                              );
+                            } else {
+                              // Placeholder or loading indicator when snapshot has no data
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   // Least Priority Tab
-                  ListView.builder(
-                    itemCount: taskList.length,
-                    itemBuilder: (context, index) {
-                      // Your Priority Tab logic here
-                      var docId = snapshot.data!.docs[index].id;
-                      // get each indivudal doc
-                      DocumentSnapshot document = taskList[index];
-                      // String docId = document.id;
-
-                      // get task from each doc
-                      Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
-                      if (data['category'] == 'Least') {
-                        String taskText = data['title'];
-                        String taskContent = data['description'];
-                        String taskCategory = data['category'];
-                        String taskTime = data['time'];
-
-                        String taskDate = data['date'];
-                        String taskTimeStamp = data['timestamp'].toString();
-
-                        // display as list tile
-                        return Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.task_rounded,
+                                  color: getCategoryColor(
+                                    'Least',
+                                  ),
                                 ),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Text(
+                                  'Pending Tasks',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            //number of tasks
+                            Container(
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: getCategoryColor(
+                                  'Least',
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                  child: Text(
+                                    '12',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: taskList.length,
+                          itemBuilder: (context, index) {
+                            // Your Priority Tab logic here
+                            var docId = snapshot.data!.docs[index].id;
+                            // get each indivudal doc
+                            DocumentSnapshot document = taskList[index];
+                            // String docId = document.id;
+
+                            // get task from each doc
+                            Map<String, dynamic> data =
+                                document.data() as Map<String, dynamic>;
+                            if (data['category'] == 'Least') {
+                              String taskText = data['title'];
+                              String taskContent = data['description'];
+                              String taskCategory = data['category'];
+                              String taskTime = data['time'];
+
+                              String taskDate = data['date'];
+                              String taskTimeStamp =
+                                  data['timestamp'].toString();
+
+                              // display as list tile
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
                                   //showCheckBox
                                   onLongPress: () {
@@ -774,173 +1122,266 @@ class _TaskState extends State<Task> {
                                   onDoubleTap: () {
                                     _handleDoubleTap();
                                   },
-                                  child: ListTile(
-                                    title: Text(taskText),
-                                    subtitle: Text(
-                                      taskContent,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    leading: showCheckbox
-                                        ? Checkbox(
-                                            value:
-                                                selectedIndex.contains(index),
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                if (value != null && value) {
-                                                  selectedIndex.add(index);
-                                                } else {
-                                                  selectedIndex.remove(index);
-                                                }
-                                              });
-                                            },
-                                            activeColor: Color.fromARGB(
-                                                255, 91, 89, 247),
-                                          )
-                                        : null,
-                                    //mark as completed
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 25),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(taskCategory,
-                                                  style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 14)),
-                                            ],
-                                          ),
-                                        ),
-                                        IconButton(
-                                          isSelected: standardSelected,
-                                          onPressed: () {
-                                            //handle completed task
-                                            setState(() {
-                                              standardSelected =
-                                                  !standardSelected;
-                                            });
-
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title:
-                                                      Text('Mark as Complete'),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        // Dismiss the dialog
-                                                        Navigator.of(context)
-                                                            .pop();
-
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const ShowTask()));
-                                                      },
-                                                      child: Text(
-                                                        'Cancel',
-                                                        style: TextStyle(
-                                                          color: const Color
-                                                              .fromARGB(255,
-                                                              128, 127, 127),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        FirestoreService()
-                                                            .markComplete(
-                                                                taskText,
-                                                                taskContent,
-                                                                taskDate,
-                                                                taskTime,
-                                                                taskCategory,
-                                                                docId);
-
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const Homepage()));
-
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                "Task Mark Completed"),
-                                                            duration:
-                                                                const Duration(
-                                                                    seconds: 3),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Text(
-                                                        'Confirm',
-                                                        style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255, 91, 89, 247),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          selectedIcon: const Icon(
-                                            Icons.flag,
-                                            color: Colors.greenAccent,
-                                          ),
-                                          icon: Icon(
-                                            Icons.flag_outlined,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
+                                  //Modal Content
+                                  onTap: () {
                                     //Modal Content
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          return taskWidget(
-                                              taskText: taskText,
-                                              taskContent: taskContent,
-                                              taskCategory: taskCategory,
-                                              taskTime: taskTime,
-                                              taskDate: taskDate,
-                                              taskTimeStamp: taskTimeStamp,
-                                              docId: docId);
-                                        },
-                                      );
-                                    },
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return taskWidget(
+                                            taskText: taskText,
+                                            taskContent: taskContent,
+                                            taskCategory: taskCategory,
+                                            taskTime: taskTime,
+                                            taskDate: taskDate,
+                                            taskTimeStamp: taskTimeStamp,
+                                            docId: docId);
+                                      },
+                                    );
+                                  },
+                                  //LIST BOX CONTENT
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(1),
+                                              spreadRadius: 1,
+                                              blurRadius: 3,
+                                              offset: Offset(0,
+                                                  3), // changes the position of the shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 5, sigmaY: 5),
+                                            child: Container(
+                                              color:
+                                                  Colors.white.withOpacity(1),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Wrap(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          child: showCheckbox
+                                                              ? Checkbox(
+                                                                  value: selectedIndex
+                                                                      .contains(
+                                                                          index),
+                                                                  onChanged:
+                                                                      (bool?
+                                                                          value) {
+                                                                    setState(
+                                                                        () {
+                                                                      if (value !=
+                                                                              null &&
+                                                                          value) {
+                                                                        selectedIndex
+                                                                            .add(index);
+                                                                      } else {
+                                                                        selectedIndex
+                                                                            .remove(index);
+                                                                      }
+                                                                    });
+                                                                  },
+                                                                  activeColor: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          91,
+                                                                          89,
+                                                                          247),
+                                                                )
+                                                              : null,
+                                                        ),
+                                                        Expanded(
+                                                            child: ClipRRect(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    taskText,
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 13,
+                                                                  ),
+                                                                  Text(
+                                                                    taskDate,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Column(
+                                                                      children: [
+                                                                        IconButton(
+                                                                          isSelected:
+                                                                              standardSelected,
+                                                                          onPressed:
+                                                                              () {
+                                                                            //handle completed task
+                                                                            setState(() {
+                                                                              standardSelected = !standardSelected;
+                                                                            });
+
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return AlertDialog(
+                                                                                  title: Text('Mark as Complete'),
+                                                                                  actions: <Widget>[
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        // Dismiss the dialog
+                                                                                        Navigator.of(context).pop();
+
+                                                                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ShowTask()));
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        'Cancel',
+                                                                                        style: TextStyle(
+                                                                                          color: const Color.fromARGB(255, 128, 127, 127),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        FirestoreService().markComplete(taskText, taskContent, taskDate, taskTime, taskCategory, docId);
+
+                                                                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homepage()));
+
+                                                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                                                          SnackBar(
+                                                                                            content: Text("Task Mark Completed"),
+                                                                                            duration: const Duration(seconds: 3),
+                                                                                          ),
+                                                                                        );
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        'Confirm',
+                                                                                        style: TextStyle(
+                                                                                          color: Color.fromARGB(255, 91, 89, 247),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          selectedIcon:
+                                                                              const Icon(
+                                                                            Icons.flag,
+                                                                            color:
+                                                                                Colors.greenAccent,
+                                                                          ),
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.flag_outlined,
+                                                                            color:
+                                                                                Colors.green,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          height:
+                                                                              28,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                getCategoryColor(taskCategory),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                                                              child: Text(
+                                                                                taskCategory,
+                                                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ))
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        // Placeholder or loading indicator when snapshot has no data
-                        return Container();
-                      }
-                    },
+                              );
+                            } else {
+                              // Placeholder or loading indicator when snapshot has no data
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               );
@@ -957,12 +1398,12 @@ class _TaskState extends State<Task> {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const AddTask()));
           },
-          backgroundColor: Color.fromARGB(255, 91, 89, 247),
+          backgroundColor: Color.fromARGB(255, 178, 164, 255),
           shape: CircleBorder(),
           foregroundColor: Colors.white,
           child: Icon(Icons.add),
         ),
-        backgroundColor: const Color.fromARGB(255, 241, 244, 248),
+        backgroundColor: const Color.fromARGB(255, 241, 234, 255),
       ),
     );
   }
