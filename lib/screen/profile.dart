@@ -8,12 +8,6 @@ import 'package:todo_list_application/services/firestoreService.dart';
 class profile extends StatefulWidget {
   const profile({super.key});
 
-  // const profile({
-  //   required this.fName,
-  //   required this.lName,
-  //   super.key,
-  // });
-
   @override
   State<profile> createState() => _profileState();
 }
@@ -30,6 +24,23 @@ class _profileState extends State<profile> {
   final _lnameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
+
+  String fname = "";
+  String lname = "";
+
+  String firstName = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the readTasks method when the widget is initialized
+    readTasks().then((_) {
+      firstName = fname;
+      print(fname);
+      print("It works now");
+      print(firstName);
+    });
+  }
 
   //TextField WIDGET
   Widget editNamesWidget(
@@ -85,7 +96,7 @@ class _profileState extends State<profile> {
                   ),
                 ),
                 Text(
-                  'Kim Leones',
+                  '$fname $lname',
                   style: GoogleFonts.montserrat(
                     textStyle: TextStyle(
                       fontSize: 20,
@@ -210,7 +221,7 @@ class _profileState extends State<profile> {
                       right: 20,
                     ),
                     child: Text(
-                      'Edit First Name ',
+                      'First Name $firstName $fname',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -218,10 +229,30 @@ class _profileState extends State<profile> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, top: 10),
+                    child: TextFormField(
+                      controller: _fnameController,
+                      // focusNode: _emailFocusNode,
 
-                  editNamesWidget(
-                    textEditingController: _lnameController,
-                    keyboardType: TextInputType.text,
+                      autofocus: true,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: fname,
+                        // decoration box
+
+                        filled: true,
+                        fillColor: const Color.fromARGB(255, 241, 244, 248),
+
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              _fnameController.clear();
+                            },
+                            icon: const Icon(Icons.clear)),
+                      ),
+                    ),
                   ),
 
                   //Change Last Name
@@ -232,7 +263,7 @@ class _profileState extends State<profile> {
                       right: 20,
                     ),
                     child: Text(
-                      'Edit Last Name ',
+                      'Last Name ',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -240,10 +271,32 @@ class _profileState extends State<profile> {
                       ),
                     ),
                   ),
-                  editNamesWidget(
-                    textEditingController: _lnameController,
-                    keyboardType: TextInputType.text,
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, top: 10),
+                    child: TextFormField(
+                      controller: _lnameController,
+                      // focusNode: _emailFocusNode,
+
+                      autofocus: true,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: fname,
+                        // decoration box
+
+                        filled: true,
+                        fillColor: const Color.fromARGB(255, 241, 244, 248),
+
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              _lnameController.clear();
+                            },
+                            icon: const Icon(Icons.clear)),
+                      ),
+                    ),
                   ),
+
                   //Change Email Button
                   Padding(
                     padding: const EdgeInsets.only(
@@ -252,7 +305,7 @@ class _profileState extends State<profile> {
                       right: 20,
                     ),
                     child: Text(
-                      'Edit Email ',
+                      'Email ',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -260,29 +313,30 @@ class _profileState extends State<profile> {
                       ),
                     ),
                   ),
-                  editNamesWidget(
-                    textEditingController: _lnameController,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  //Change Password
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: 24,
-                      top: 10,
-                      right: 20,
-                    ),
-                    child: Text(
-                      'Edit Password ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color.fromARGB(255, 63, 62, 62),
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, top: 10),
+                    child: TextFormField(
+                      controller: _lnameController,
+                      // focusNode: _emailFocusNode,
+
+                      autofocus: true,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: fname,
+                        // decoration box
+
+                        filled: true,
+                        fillColor: const Color.fromARGB(255, 241, 244, 248),
+
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              _fnameController.clear();
+                            },
+                            icon: const Icon(Icons.clear)),
                       ),
                     ),
-                  ),
-                  editNamesWidget(
-                    textEditingController: _lnameController,
-                    keyboardType: TextInputType.visiblePassword,
                   ),
                 ],
               ),
@@ -329,6 +383,7 @@ class _profileState extends State<profile> {
                   child: ElevatedButton(
                     onPressed: () {
                       //handle  the editting
+                      readTasks();
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color.fromARGB(
@@ -353,6 +408,28 @@ class _profileState extends State<profile> {
         ],
       ),
       backgroundColor: const Color.fromARGB(255, 241, 234, 255),
+    );
+  }
+
+  // Read
+  Future<void> readTasks() async {
+    await FirestoreService()
+        .firestoreService
+        .collection("users")
+        .where("email", isEqualTo: user.email!)
+        .get()
+        .then(
+      (querySnapshot) {
+        print("Successfully completed");
+
+        for (var docSnapshot in querySnapshot.docs) {
+          // Retrieve the name from the document data
+          fname = docSnapshot.data()['First Name'];
+          lname = docSnapshot.data()['Last Name'];
+        }
+        print(fname);
+      },
+      onError: (e) => print("Error completing: $e"),
     );
   }
 }

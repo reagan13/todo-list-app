@@ -23,12 +23,12 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  final user = FirebaseAuth.instance.currentUser!;
   static const List<Widget> _widgetOptions = <Widget>[
     ShowTask(),
     profile(),
     Task(),
     Completed(),
-    calendar(),
     LogoutPage(),
   ];
 
@@ -192,21 +192,6 @@ class _HomepageState extends State<Homepage> {
           },
           selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),
-        ListTile(
-          leading: Icon(
-            Icons.calendar_month,
-            size: 25.0,
-          ),
-          title: Text('Calendar'),
-          selected: _selectedIndex == 4,
-          onTap: () {
-            // Update the state of the app
-            _onItemTapped(4);
-            // Then close the drawer
-            Navigator.pop(context);
-          },
-          selectedColor: Color.fromARGB(255, 178, 164, 255),
-        ),
 
         //horizontal line
         Divider(),
@@ -216,10 +201,10 @@ class _HomepageState extends State<Homepage> {
             size: 25.0,
           ),
           title: const Text('Logout'),
-          selected: _selectedIndex == 5,
+          selected: _selectedIndex == 4,
           onTap: () {
-            _onItemTapped(5);
-            Navigator.pop(context);
+            _onItemTapped(4);
+            FirebaseAuth.instance.signOut();
           },
           selectedColor: Color.fromARGB(255, 178, 164, 255),
         ),

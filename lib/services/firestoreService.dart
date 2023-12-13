@@ -96,32 +96,12 @@ class FirestoreService {
     });
   }
 
-  // GetName
-  Future<List<String>> getName() async {
-    List<String> names = [];
-
-    try {
-      var querySnapshot = await firestoreService.collection("users").get();
-      print("Successfully completed");
-
-      for (var docSnapshot in querySnapshot.docs) {
-        var data = docSnapshot.data() as Map<String, dynamic>;
-
-        // Assuming 'firstName' and 'lastName' are the field names in Firestore
-        var firstName = data['firstName'];
-        var lastName = data['lastName'];
-
-        var fullName = '$firstName $lastName';
-        names.add(fullName);
-
-        print('${docSnapshot.id} => $fullName');
-      }
-
-      return names;
-    } catch (e) {
-      print("Error completing: $e");
-      return []; // or throw an exception, depending on your requirements
-    }
+  // get Profile
+  Stream<QuerySnapshot> getProfile() {
+    return firestoreService
+        .collection("users")
+        .where("email", isEqualTo: user.email!)
+        .snapshots();
   }
 
   // update task
